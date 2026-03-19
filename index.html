@@ -11,7 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap"
       rel="stylesheet"
     />
-    <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
       /* ── Reset ── */
       *,
@@ -1340,19 +1340,19 @@
       }
       .cred-name {
         font-size: 0.7rem;
-        font-weight: 600;
+
         color: var(--tx2);
-        margin-bottom: 5px;
+        margin-bottom: 3px;
       }
       .cred-yr {
         font-size: 0.63rem;
-        color: var(--tx3);
+        color: var(--tx2);
       }
       .cred-soc {
         display: flex;
         justify-content: center;
         gap: 9px;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
       }
       .cred-a {
         width: 27px;
@@ -1375,9 +1375,9 @@
         padding: 40px 14px 22px;
         text-align: center;
         color: var(--tx3);
-        font-size: 0.63rem;
+        font-size: 0.75rem;
         line-height: 1.9;
-        opacity: 0.46;
+        opacity: 0.5;
       }
       /* Toast */
       .toast {
@@ -1475,7 +1475,7 @@
               <div class="card">
                 <div class="card-body">
                   <div class="fr">
-                    <div class="fl">Nomor Modul <span class="req">*</span></div>
+                    <div class="fl">Nomor Modul <span class="req"></span></div>
                     <div class="mod-wrap">
                       <span class="mod-pfx">MODUL</span
                       ><input
@@ -1490,7 +1490,7 @@
                     </div>
                   </div>
                   <div class="fr">
-                    <div class="fl">Judul Modul <span class="req">*</span></div>
+                    <div class="fl">Judul Modul <span class="req"></span></div>
                     <input
                       class="inp"
                       type="text"
@@ -1500,7 +1500,7 @@
                     />
                   </div>
                   <div class="fr">
-                    <div class="fl">Mata Kuliah <span class="req">*</span></div>
+                    <div class="fl">Mata Kuliah <span class="req"></span></div>
                     <div class="pfx">
                       <span class="pfx-txt">Laporan Praktikum</span
                       ><input
@@ -1519,9 +1519,7 @@
               <div class="card">
                 <div class="card-body">
                   <div class="fr">
-                    <div class="fl">
-                      Nama Lengkap <span class="req">*</span>
-                    </div>
+                    <div class="fl">Nama Lengkap <span class="req"></span></div>
                     <input
                       class="inp"
                       type="text"
@@ -1531,7 +1529,7 @@
                     />
                   </div>
                   <div class="fr">
-                    <div class="fl">NIM <span class="req">*</span></div>
+                    <div class="fl">NIM <span class="req"></span></div>
                     <input
                       class="inp"
                       type="text"
@@ -1541,7 +1539,7 @@
                     />
                   </div>
                   <div class="fr">
-                    <div class="fl">Kelas <span class="req">*</span></div>
+                    <div class="fl">Kelas <span class="req"></span></div>
                     <div class="kctr" id="kctr">
                       <div class="kpill" id="kpill"></div>
                       <button class="kbtn active" onclick="setKelas('RA', 0)">
@@ -1594,7 +1592,7 @@
                 <div class="card-body">
                   <div class="fr">
                     <div class="fl">
-                      Tanggal Praktikum <span class="req">*</span>
+                      Tanggal Praktikum <span class="req"></span>
                     </div>
                     <input
                       class="inp"
@@ -1605,22 +1603,13 @@
                   </div>
                   <div class="fr">
                     <div class="fl">
-                      Tempat Praktikum <span class="req">*</span>
+                      Tempat Praktikum <span class="req"></span>
                     </div>
                     <select class="sel" id="lokasiPraktikum" onchange="qup()">
-                      <option value="">— Pilih Lokasi —</option>
                       <option>
                         Laboratorium Rekayasa Instrumentasi dan Automasi
                       </option>
-                      <option>Laboratorium Komputer</option>
-                      <option>Laboratorium Fisika</option>
-                      <option>Laboratorium Kimia</option>
-                      <option>Laboratorium Biologi</option>
-                      <option>Laboratorium Elektronika</option>
-                      <option>Laboratorium Jaringan</option>
-                      <option>Laboratorium Pemrograman</option>
-                      <option>Laboratorium Mesin</option>
-                      <option>Ruang Kelas</option>
+                      <option>Laboratorium Teknik Fisika</option>
                     </select>
                   </div>
                   <div class="fr">
@@ -1664,7 +1653,8 @@
                 </div>
               </div>
               <div class="app-ft">
-                Made with ❤️ by <strong>Dev Name</strong> · Cover Generator 2026
+                Made by <strong>samuelslgn</strong>
+                <div>Cover Generator © 2026</div>
               </div>
             </div>
             <!-- /panelForm -->
@@ -1891,7 +1881,7 @@
           <div class="srow">
             <div class="dim-grid" style="width: 100%">
               <div>
-                <div class="dim-lbl">↔ Lebar</div>
+                <div class="dim-lbl">Lebar</div>
                 <div class="dim-wrap">
                   <input
                     class="inp"
@@ -1905,7 +1895,7 @@
                 </div>
               </div>
               <div>
-                <div class="dim-lbl">↕ Tinggi</div>
+                <div class="dim-lbl">Tinggi</div>
                 <div class="dim-wrap">
                   <input
                     class="inp"
@@ -1927,7 +1917,7 @@
           <div class="srow">
             <div class="dim-grid" style="width: 100%">
               <div>
-                <div class="dim-lbl">↑ Atas</div>
+                <div class="dim-lbl">Atas</div>
                 <div class="dim-wrap">
                   <input
                     class="inp"
@@ -1942,7 +1932,7 @@
                 </div>
               </div>
               <div>
-                <div class="dim-lbl">↓ Bawah</div>
+                <div class="dim-lbl">Bawah</div>
                 <div class="dim-wrap">
                   <input
                     class="inp"
@@ -1957,7 +1947,7 @@
                 </div>
               </div>
               <div>
-                <div class="dim-lbl">← Kiri</div>
+                <div class="dim-lbl">Kiri</div>
                 <div class="dim-wrap">
                   <input
                     class="inp"
@@ -1972,7 +1962,7 @@
                 </div>
               </div>
               <div>
-                <div class="dim-lbl">→ Kanan</div>
+                <div class="dim-lbl">Kanan</div>
                 <div class="dim-wrap">
                   <input
                     class="inp"
@@ -2040,13 +2030,61 @@
         </div>
         <div class="cred">
           <div class="cred-soc">
-            <a class="cred-a" href="#" title="Instagram">📸</a>
-            <a class="cred-a" href="#" title="GitHub">🐙</a>
-            <a class="cred-a" href="#" title="LinkedIn">💼</a>
-            <a class="cred-a" href="#" title="Twitter/X">🐦</a>
+            <a
+              class="cred-a"
+              href="https://www.instagram.com/samuelslgn/?__pwa=1"
+              title="Instagram"
+              style="background: #ff0069"
+            >
+              <img
+                src="https://cdn.simpleicons.org/instagram/ffffff"
+                width="14"
+                height="14"
+                alt="IG"
+              />
+            </a>
+            <a
+              class="cred-a"
+              href="https://github.com/samuelslgn?tab=repositories"
+              title="GitHub"
+              style="background: #181717"
+            >
+              <img
+                src="https://cdn.simpleicons.org/github/ffffff"
+                width="14"
+                height="14"
+                alt="GH"
+              />
+            </a>
+            <a
+              class="cred-a"
+              href="#"
+              title="Discord"
+              style="background: #5865f2"
+            >
+              <img
+                src="https://cdn.simpleicons.org/Discord/ffffff"
+                width="14"
+                height="14"
+                alt="LI"
+              />
+            </a>
+            <a
+              class="cred-a"
+              href="https://x.com/elonmusk"
+              title="Twitter/X"
+              style="background: #000000"
+            >
+              <img
+                src="https://cdn.simpleicons.org/x/ffffff"
+                width="14"
+                height="14"
+                alt="X"
+              />
+            </a>
           </div>
-          <div class="cred-name">Dibuat oleh <strong>Dev Name</strong></div>
-          <div class="cred-yr">Cover Generator · 2026</div>
+          <div class="cred-name">Made by <strong>samuelslgn</strong></div>
+          <div class="cred-yr">Cover Generator © 2026</div>
         </div>
       </div>
     </div>
@@ -2352,7 +2390,7 @@
       <div class="slbl2">Nama Asisten ${i + 1}</div>
       <input class="inp" type="text" placeholder="Nama" value="${esc(a.n)}" oninput="updA(${i},'n',this.value)">
       <div class="slbl2 mt8">NIM Asisten ${i + 1}</div>
-      <input class="inp" type="text" placeholder="NIM / ID" value="${esc(a.m)}" oninput="updA(${i},'m',this.value)">
+      <input class="inp" type="text" placeholder="NIM" value="${esc(a.m)}" oninput="updA(${i},'m',this.value)">
     </div>`,
           )
           .join("");
@@ -2419,7 +2457,7 @@
         el("sovl").classList.add("on");
         el("sht").classList.add("on");
         if (btn) {
-          btn.style.transform = "rotate(90deg) scale(1.1)";
+          btn.style.transform = "rotate(180deg) scale(1.1)";
           setTimeout(() => (btn.style.transform = ""), 460);
         }
       }
@@ -2437,10 +2475,8 @@
         }
         const e = encodeURIComponent(t);
         if (ch === "email")
-          window.open(
-            `mailto:feedback@example.com?subject=Feedback%20Cover%20Generator&body=${e}`,
-          );
-        else window.open(`https://wa.me/6281234567890?text=${e}`);
+          window.open(`mailto:samuelsiallagan49@gmail.com&body=${e}`);
+        else window.open(`https://wa.me/6288807654204?text=${e}`);
         toast("✔ Membuka aplikasi…");
       }
 
@@ -2602,7 +2638,7 @@
       <div style="${bs}font-weight:bold">Mengetahui,</div>
       <div style="height:66px"></div>
       <div style="${bs}font-weight:bold">${esc(a?.n || "...")}</div>
-      <div style="${bs}">NIM. ${esc(a?.m || "...")}</div>
+      <div style="${bs}">${esc(a?.m || "...")}</div>
     </div>
   </div>
 </div>`;
@@ -2654,20 +2690,36 @@ body{font-family:'Times New Roman',Times,serif;font-size:12pt;color:#000;backgro
 /* @page margin:0 removes ALL browser watermarks (URL, date, page numbers) */
 @page{ size:210mm 297mm; margin:0; }
 
-/* Each .page = exactly one A4 sheet. Padding replaces @page margin. */
+/* Each .page = exactly one A4 sheet */
+/* Print: hard height = 297mm, no overflow bleeds to next page */
+/* Screen: height auto so content is fully visible in preview */
 .page{
   width:210mm;
-  height:297mm;
   padding:${t}cm ${r}cm ${b}cm ${l}cm;
-  page-break-after:always;
-  break-after:page;
-  overflow:hidden;
   background:#fff;
-  /* flexbox for vertical distribution */
   display:flex;
   flex-direction:column;
+  /* Screen height = auto (no artificial truncation) */
+  min-height:297mm;
+  height:auto;
 }
-.page:last-child{ page-break-after:avoid; break-after:avoid; }
+@media print{
+  .page{
+    /* Print height = exactly 297mm = one A4 page */
+    height:297mm;
+    min-height:0;
+    max-height:297mm;
+    overflow:hidden;
+    page-break-after:always;
+    break-after:page;
+  }
+  .page:last-child{
+    page-break-after:avoid;
+    break-after:avoid;
+  }
+  /* Prevent empty extra pages from body margin/padding */
+  html,body{ height:auto!important; margin:0!important; padding:0!important; }
+}
 
 /* Page 1 vertical layout */
 .sp{ flex:1; }          /* elastic spacer */
@@ -2696,12 +2748,23 @@ body{font-family:'Times New Roman',Times,serif;font-size:12pt;color:#000;backgro
 
 /* Screen only (popup preview) */
 @media screen{
-  body{ background:#888; padding:20px; }
-  .page{ margin:0 auto 24px; box-shadow:0 6px 24px rgba(0,0,0,.4); }
-  #ctrl{ position:fixed; bottom:18px; right:18px; display:flex; flex-direction:column; align-items:center; gap:6px; z-index:999; font-family:system-ui,sans-serif; }
-  #pbtn{ padding:12px 22px; background:#007aff; color:#fff; border:none; border-radius:11px; font-size:.93rem; font-weight:700; cursor:pointer; box-shadow:0 4px 16px rgba(0,122,255,.45); }
-  #pbtn:hover{ background:#005ecc; }
-  #ptip{ font-size:.68rem; color:#ddd; text-align:center; line-height:1.6; }
+  body{ background:#888; padding:20px 20px 160px; }
+  .page{ margin:0 auto 24px; box-shadow:0 6px 24px rgba(0,0,0,.4); height:auto; min-height:297mm; }
+  #ctrl{
+    position:fixed; bottom:0; left:0; right:0;
+    background:rgba(20,20,30,.92); backdrop-filter:blur(16px);
+    padding:14px 20px 20px; z-index:999; font-family:system-ui,sans-serif;
+    border-top:1px solid rgba(255,255,255,.1);
+  }
+  #infobox{ max-width:520px; margin:0 auto; }
+  #infotitle{ font-size:.82rem; font-weight:700; color:#fff; margin-bottom:8px; letter-spacing:.2px; }
+  #infolist{ font-size:.78rem; color:#ccc; line-height:1.7; padding-left:18px; }
+  #infolist li{ margin-bottom:2px; }
+  #infolist strong{ color:#fff; }
+  #infolist em{ color:#aaa; font-style:normal; }
+  kbd{ background:rgba(255,255,255,.15); padding:1px 5px; border-radius:4px; font-size:.73rem; color:#fff; font-family:monospace; }
+  .or{ opacity:.5; font-size:.72rem; }
+  #infotip{ font-size:.72rem; color:#888; margin-top:6px; }
 }
 @media print{
   body{ background:#fff; padding:0; }
@@ -2712,8 +2775,16 @@ body{font-family:'Times New Roman',Times,serif;font-size:12pt;color:#000;backgro
 <body>
 
 <div id="ctrl">
-  <button id="pbtn" onclick="window.print()">🖨 Simpan sebagai PDF</button>
-  <div id="ptip">Ctrl+P / ⌘P → pilih <strong>Save as PDF</strong><br>Nonaktifkan <em>Headers and footers</em></div>
+  <div id="infobox">
+    <div id="infotitle">📄 Cara Cetak ke PDF</div>
+    <ol id="infolist">
+      <li>Tekan <kbd>Ctrl+P</kbd> <span class="or">atau</span> <kbd>⌘P</kbd> di Mac</li>
+      <li>Di <em>Destination / Tujuan</em>, pilih <strong>Save as PDF</strong></li>
+      <li>Pastikan <em>Headers and footers</em> <strong>dimatikan</strong></li>
+      <li>Klik <strong>Save / Simpan</strong></li>
+    </ol>
+    <div id="infotip">Pada HP 📱: klik ⋮ → Print → Save as PDF</div>
+  </div>
 </div>
 
 <!-- PAGE 1 -->
@@ -2797,204 +2868,205 @@ window.addEventListener('load',function(){
         pw.document.open();
         pw.document.write(html);
         pw.document.close();
-        toast("✔ Jendela cetak terbuka");
+        toast("✔ Tab cetak terbuka");
       }
 
+      /* ═══ DOCX Export via JSZip + raw OOXML ═══
+   Builds a valid .docx (Office Open XML) file directly.
+   No docx.js dependency — pure browser, works on all hosting.
+════════════════════════════════════════════════════════════ */
       async function exportDOCX() {
-        if (!validate()) return;
-        // docx.js UMD exports to window.docx
-        const D = window.docx;
-        if (!D) {
-          toast("⚠️ Library docx belum termuat, muat ulang");
+        if (typeof JSZip === "undefined") {
+          toast("⚠️ JSZip belum termuat, muat ulang halaman");
           return;
         }
-        toast("⏳ Membuat DOCX…", 8000);
+        toast("⏳ Membuat DOCX…");
         try {
-          const {
-            Document,
-            Packer,
-            Paragraph,
-            TextRun,
-            AlignmentType,
-            PageBreak,
-            BorderStyle,
-            WidthType,
-            Table,
-            TableRow,
-            TableCell,
-          } = D;
-          const nom = `MODUL ${gv("nomorModul") || 1}`,
-            jdl = gv("judulModul"),
-            mkl = `Laporan Praktikum ${gv("mataKuliah")}`;
-          const na = gv("namaM"),
-            ni = gv("nimM"),
-            kl = gv("kelasM"),
-            kg = gv("kelompokM");
+          const nom = `MODUL ${gv("nomorModul") || 1}`;
+          const jdl = gv("judulModul") || "JUDUL MODUL";
+          const mkl = `Laporan Praktikum ${gv("mataKuliah") || ""}`;
+          const na = gv("namaM") || "",
+            ni = gv("nimM") || "",
+            kl = gv("kelasM") || "RA",
+            kg = gv("kelompokM") || "";
           const tgl = fmtD(gv("tglPraktikum")),
-            lok = gv("lokasiPraktikum");
-          const a = getA(),
-            sd = gv("sigDay"),
-            sm = gv("sigMonth");
-          const TR = (t, o = {}) =>
-            new TextRun({ text: t, font: "Times New Roman", size: 24, ...o });
-          const TR14 = (t, o = {}) =>
-            new TextRun({
-              text: t,
-              font: "Times New Roman",
-              size: 28,
-              bold: true,
-              ...o,
-            });
-          const CP = (c, o = {}) =>
-            new Paragraph({
-              alignment: AlignmentType.CENTER,
-              spacing: { before: 40, after: 40 },
-              children: c,
-              ...o,
-            });
-          const LP = (c, o = {}) =>
-            new Paragraph({
-              spacing: { before: 40, after: 40 },
-              children: c,
-              ...o,
-            });
-          const RP = (c, o = {}) =>
-            new Paragraph({
-              alignment: AlignmentType.RIGHT,
-              spacing: { before: 40, after: 40 },
-              children: c,
-              ...o,
-            });
-          const MT = () =>
-            new Paragraph({
-              children: [new TextRun("")],
-              spacing: { before: 40, after: 40 },
-            });
-          const BN = { style: BorderStyle.NIL };
-          const mkRow = (lb, vl) =>
-            new TableRow({
-              children: [
-                new TableCell({
-                  width: { size: 2400, type: WidthType.DXA },
-                  borders: { top: BN, bottom: BN, left: BN, right: BN },
-                  margins: { top: 60, bottom: 60, left: 0, right: 0 },
-                  children: [new Paragraph({ children: [TR(lb)] })],
-                }),
-                new TableCell({
-                  width: { size: 200, type: WidthType.DXA },
-                  borders: { top: BN, bottom: BN, left: BN, right: BN },
-                  margins: { top: 60, bottom: 60, left: 40, right: 40 },
-                  children: [new Paragraph({ children: [TR(":")] })],
-                }),
-                new TableCell({
-                  width: { size: 5906, type: WidthType.DXA },
-                  borders: { top: BN, bottom: BN, left: BN, right: BN },
-                  margins: { top: 60, bottom: 60, left: 60, right: 0 },
-                  children: [new Paragraph({ children: [TR(vl)] })],
-                }),
-              ],
-            });
-          const SP = () =>
-            new TableRow({
-              children: [
-                new TableCell({
-                  columnSpan: 3,
-                  width: { size: 8506, type: WidthType.DXA },
-                  borders: { top: BN, bottom: BN, left: BN, right: BN },
-                  children: [MT()],
-                }),
-              ],
-            });
-          const mT = cm2dxa(gv("mTop") || 3),
-            mB = cm2dxa(gv("mBottom") || 3);
-          const mL = cm2dxa(gv("mLeft") || 4),
-            mR = cm2dxa(gv("mRight") || 3);
-          const p1 = [
-            CP([TR14(nom)]),
-            CP([TR14(jdl)]),
-            CP([TR14(mkl)]),
-            MT(),
-            MT(),
-            MT(),
-            CP([TR("Oleh:", { bold: true })]),
-            MT(),
-            LP([TR("NAMA         : " + na, { bold: true })]),
-            LP([TR("NIM            : " + ni, { bold: true })]),
-            LP([TR("KELAS        : " + kl, { bold: true })]),
-            ...(kg ? [LP([TR("KELOMPOK : " + kg, { bold: true })])] : []),
-            LP([
-              TR(
-                "ASISTEN     : " +
-                  asis
-                    .filter((x) => x.n)
-                    .map((x) => x.n)
-                    .join(", "),
-                { bold: true },
-              ),
-            ]),
-            MT(),
-            MT(),
-            CP([
-              TR("[LOGO " + logo.toUpperCase() + "]", {
-                size: 20,
-                color: "888888",
-              }),
-            ]),
-            MT(),
-            MT(),
-            MT(),
-            MT(),
-            CP([TR(LAB, { bold: true })]),
-            CP([TR(FAK, { bold: true })]),
-            CP([TR(UNIV, { bold: true })]),
-            CP([TR(String(YR), { bold: true })]),
-            new Paragraph({ children: [new PageBreak()] }),
-          ];
-          const drows = [
+            lok = gv("lokasiPraktikum") || "";
+          const astn = getA(),
+            sd = gv("sigDay") || "",
+            sm = gv("sigMonth") || "";
+          const asisNames =
+            asis
+              .filter((x) => x.n)
+              .map((x) => x.n)
+              .join(", ") || "";
+
+          // DXA units: 1cm = 566.9 DXA, 1pt = 20 twips
+          const dxa = (v) => Math.round(parseFloat(v || 0) * 566.9);
+          const mT = dxa(gv("mTop") || 3),
+            mB = dxa(gv("mBottom") || 3);
+          const mL = dxa(gv("mLeft") || 4),
+            mR = dxa(gv("mRight") || 3);
+
+          // Helper: XML escape
+          function xe(s) {
+            return (s || "")
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")
+              .replace(/"/g, "&quot;");
+          }
+
+          // Helper: bold centered paragraph
+          function cpB(text, sz = 24) {
+            return `<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:b/><w:sz w:val="${sz}"/></w:rPr><w:t xml:space="preserve">${xe(text)}</w:t></w:r></w:p>`;
+          }
+          // Helper: bold left paragraph
+          function lpB(text, sz = 24) {
+            return `<w:p><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:b/><w:sz w:val="${sz}"/></w:rPr><w:t xml:space="preserve">${xe(text)}</w:t></w:r></w:p>`;
+          }
+          // Helper: right aligned paragraph
+          function rpN(text, sz = 24, bold = false) {
+            return `<w:p><w:pPr><w:jc w:val="right"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/>${bold ? "<w:b/>" : ""}<w:sz w:val="${sz}"/></w:rPr><w:t xml:space="preserve">${xe(text)}</w:t></w:r></w:p>`;
+          }
+          // Helper: empty paragraph
+          function ep() {
+            return `<w:p><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="24"/></w:rPr><w:t></w:t></w:r></w:p>`;
+          }
+          // Helper: page break
+          function pb() {
+            return `<w:p><w:r><w:br w:type="page"/></w:r></w:p>`;
+          }
+
+          // No-border table row: label : value
+          function tRow(label, value) {
+            const bN = `<w:top w:val="none" w:sz="0"/><w:left w:val="none" w:sz="0"/><w:bottom w:val="none" w:sz="0"/><w:right w:val="none" w:sz="0"/>`;
+            const cell = (txt, w) =>
+              `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/><w:tcBorders>${bN}</w:tcBorders></w:tcPr><w:p><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="24"/></w:rPr><w:t xml:space="preserve">${xe(txt)}</w:t></w:r></w:p></w:tc>`;
+            return `<w:tr>${cell(label, 2400)}${cell(":", 200)}${cell(value, 5906)}</w:tr>`;
+          }
+          function tRowSpacer() {
+            const bN = `<w:top w:val="none" w:sz="0"/><w:left w:val="none" w:sz="0"/><w:bottom w:val="none" w:sz="0"/><w:right w:val="none" w:sz="0"/>`;
+            return `<w:tr><w:tc><w:tcPr><w:tcW w:w="8506" w:type="dxa"/><w:tcBorders>${bN}</w:tcBorders><w:gridSpan w:val="3"/></w:tcPr><w:p><w:pPr><w:spacing w:before="0" w:after="100"/></w:pPr></w:p></w:tc></w:tr>`;
+          }
+
+          const dataRows = [
             ["Judul Modul", jdl],
             ["Tanggal Praktikum", tgl],
             ["Tempat Praktikum", lok],
             ["Nama", na],
             ["NIM", ni],
             ["Kelas", kl],
-            ["Asisten Praktikum", a?.n || "..."],
+            ["Asisten Praktikum", astn?.n || ""],
           ];
-          const tbl = new Table({
-            width: { size: 8506, type: WidthType.DXA },
-            columnWidths: [2400, 200, 5906],
-            rows: drows.flatMap((rw, i) => [
-              mkRow(rw[0], rw[1]),
-              ...(i < drows.length - 1 ? [SP()] : []),
-            ]),
+          const tableXML = `<w:tbl>
+      <w:tblPr><w:tblW w:w="8506" w:type="dxa"/><w:tblBorders><w:insideH w:val="none"/><w:insideV w:val="none"/><w:top w:val="none"/><w:left w:val="none"/><w:bottom w:val="none"/><w:right w:val="none"/></w:tblBorders></w:tblPr>
+      <w:tblGrid><w:gridCol w:w="2400"/><w:gridCol w:w="200"/><w:gridCol w:w="5906"/></w:tblGrid>
+      ${dataRows.map((r, i) => tRow(r[0], r[1]) + (i < dataRows.length - 1 ? tRowSpacer() : "")).join("")}
+    </w:tbl>`;
+
+          const docXML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"
+  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<w:body>
+  <!-- PAGE 1 -->
+  ${cpB(nom, 28)}
+  ${cpB(jdl, 28)}
+  ${cpB(mkl, 28)}
+  ${ep()}${ep()}${ep()}
+  ${cpB("Oleh:", 24)}
+  ${ep()}
+  ${lpB("NAMA         : " + na)}
+  ${lpB("NIM            : " + ni)}
+  ${lpB("KELAS        : " + kl)}
+  ${kg ? lpB("KELOMPOK : " + kg) : ""}
+  ${lpB("ASISTEN     : " + asisNames)}
+  ${ep()}${ep()}
+  ${cpB("[LOGO " + logo.toUpperCase() + "]", 20)}
+  ${ep()}${ep()}${ep()}${ep()}
+  ${cpB(LAB, 24)}
+  ${cpB(FAK, 24)}
+  ${cpB(UNIV, 24)}
+  ${cpB(String(YR), 24)}
+  ${pb()}
+  <!-- PAGE 2 -->
+  ${tableXML}
+  ${ep()}${ep()}${ep()}${ep()}
+  ${rpN(`Lampung Selatan, ${sd} ${sm} ${YR}`)}
+  ${rpN("Mengetahui,", 24, true)}
+  ${ep()}${ep()}${ep()}
+  ${rpN(astn?.n || "", 24, true)}
+  ${rpN("NIM. " + (astn?.m || ""))}
+  <w:sectPr>
+    <w:pgSz w:w="11906" w:h="16838"/>
+    <w:pgMar w:top="${mT}" w:right="${mR}" w:bottom="${mB}" w:left="${mL}"/>
+  </w:sectPr>
+</w:body>
+</w:document>`;
+
+          const relsXML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+</Relationships>`;
+
+          const stylesXML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:docDefaults>
+    <w:rPrDefault><w:rPr>
+      <w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/>
+      <w:sz w:val="24"/>
+    </w:rPr></w:rPrDefault>
+  </w:docDefaults>
+</w:styles>`;
+
+          const appXML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties">
+  <Application>Cover Generator</Application>
+</Properties>`;
+
+          const coreXML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"
+  xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <dc:creator>Cover Generator</dc:creator>
+  <dc:title>Cover Laporan Praktikum</dc:title>
+</cp:coreProperties>`;
+
+          const wordRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>
+  <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>
+</Relationships>`;
+
+          const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+  <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
+  <Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>
+</Types>`;
+
+          const zip = new JSZip();
+          zip.file("[Content_Types].xml", contentTypes);
+          zip.folder("_rels").file(".rels", wordRels);
+          const word = zip.folder("word");
+          word.file("document.xml", docXML);
+          word.file("styles.xml", stylesXML);
+          word.folder("_rels").file("document.xml.rels", relsXML);
+          const docProps = zip.folder("docProps");
+          docProps.file("app.xml", appXML);
+          docProps.file("core.xml", coreXML);
+
+          const blob = await zip.generateAsync({
+            type: "blob",
+            mimeType:
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            compression: "DEFLATE",
+            compressionOptions: { level: 6 },
           });
-          const p2 = [
-            tbl,
-            MT(),
-            MT(),
-            MT(),
-            MT(),
-            RP([TR(`Lampung Selatan, ${sd} ${sm} ${YR}`)]),
-            RP([TR("Mengetahui,", { bold: true })]),
-            MT(),
-            MT(),
-            MT(),
-            RP([TR(a?.n || "...", { bold: true })]),
-            RP([TR("NIM. " + (a?.m || "..."))]),
-          ];
-          const doc = new Document({
-            sections: [
-              {
-                properties: {
-                  page: {
-                    size: { width: 11906, height: 16838 },
-                    margin: { top: mT, right: mR, bottom: mB, left: mL },
-                  },
-                },
-                children: [...p1, ...p2],
-              },
-            ],
-          });
-          const blob = await Packer.toBlob(doc);
+
           const url = URL.createObjectURL(blob);
           const lnk = document.createElement("a");
           lnk.href = url;
@@ -3008,8 +3080,8 @@ window.addEventListener('load',function(){
           }, 2000);
           toast("✔ DOCX berhasil diunduh!");
         } catch (e) {
-          console.error(e);
-          toast("❌ Gagal buat DOCX: " + (e.message || String(e)));
+          console.error("DOCX error:", e);
+          toast("❌ Gagal: " + (e.message || String(e)));
         }
       }
     </script>
