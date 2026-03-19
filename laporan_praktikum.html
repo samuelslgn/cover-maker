@@ -1,0 +1,3053 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <title>Cover Generator</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.2.2/docx.umd.min.js"></script>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :root {
+        --bg: #eef2ff;
+        --surface: rgba(255, 255, 255, 0.68);
+        --surface-thick: rgba(255, 255, 255, 0.9);
+        --glass: rgba(255, 255, 255, 0.52);
+        --glass-strong: rgba(255, 255, 255, 0.76);
+        --border: rgba(255, 255, 255, 0.92);
+        --sep: rgba(60, 60, 67, 0.13);
+        --fill1: rgba(120, 120, 128, 0.18);
+        --fill2: rgba(120, 120, 128, 0.12);
+        --fill3: rgba(118, 118, 128, 0.08);
+        --fill4: rgba(116, 116, 128, 0.05);
+        --text: #08080f;
+        --text2: rgba(16, 16, 40, 0.62);
+        --text3: rgba(16, 16, 40, 0.35);
+        --blue: #007aff;
+        --blue-g: rgba(0, 122, 255, 0.28);
+        --indigo: #5856d6;
+        --purple: #af52de;
+        --green: #34c759;
+        --red: #ff3b30;
+        --orange: #ff9500;
+        --blur-sm: saturate(180%) blur(16px);
+        --blur-md: saturate(200%) blur(30px);
+        --blur-lg: saturate(220%) blur(52px);
+        --sh-sm: 0 2px 14px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+        --sh-md: 0 8px 36px rgba(0, 0, 0, 0.09), 0 2px 10px rgba(0, 0, 0, 0.05);
+        --sh-lg:
+          0 24px 64px rgba(0, 0, 0, 0.13), 0 4px 18px rgba(0, 0, 0, 0.07);
+        --r-sm: 12px;
+        --r-md: 16px;
+        --r-lg: 22px;
+        --r-xl: 28px;
+        --r-f: 999px;
+        --f: "Inter", -apple-system, system-ui, sans-serif;
+        --safe-t: env(safe-area-inset-top, 0px);
+        --safe-b: env(safe-area-inset-bottom, 0px);
+      }
+      [data-theme="dark"] {
+        --bg: #080b18;
+        --surface: rgba(18, 22, 42, 0.72);
+        --surface-thick: rgba(18, 22, 42, 0.92);
+        --glass: rgba(28, 34, 62, 0.62);
+        --glass-strong: rgba(36, 42, 74, 0.82);
+        --border: rgba(255, 255, 255, 0.1);
+        --sep: rgba(255, 255, 255, 0.09);
+        --fill1: rgba(120, 120, 128, 0.38);
+        --fill2: rgba(120, 120, 128, 0.28);
+        --fill3: rgba(118, 118, 128, 0.2);
+        --fill4: rgba(116, 116, 128, 0.13);
+        --text: #ededff;
+        --text2: rgba(210, 210, 255, 0.6);
+        --text3: rgba(210, 210, 255, 0.3);
+        --blue: #0a84ff;
+        --blue-g: rgba(10, 132, 255, 0.38);
+        --green: #30d158;
+        --red: #ff453a;
+        --sh-sm: 0 2px 14px rgba(0, 0, 0, 0.32);
+        --sh-md: 0 8px 36px rgba(0, 0, 0, 0.5);
+        --sh-lg: 0 24px 64px rgba(0, 0, 0, 0.64);
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: var(--f);
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100dvh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.5s,
+          color 0.3s;
+      }
+
+      /* Orbs */
+      .bg-layer {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        will-change: transform;
+        animation: orbDrift var(--d, 12s) ease-in-out infinite alternate;
+      }
+      .orb1 {
+        width: 58vw;
+        height: 58vw;
+        background: radial-gradient(
+          circle,
+          rgba(0, 122, 255, 0.2),
+          transparent 70%
+        );
+        top: -12%;
+        left: -12%;
+        --d: 15s;
+      }
+      .orb2 {
+        width: 46vw;
+        height: 46vw;
+        background: radial-gradient(
+          circle,
+          rgba(175, 82, 222, 0.16),
+          transparent 70%
+        );
+        top: 8%;
+        right: -10%;
+        --d: 11s;
+      }
+      .orb3 {
+        width: 62vw;
+        height: 62vw;
+        background: radial-gradient(
+          circle,
+          rgba(47, 184, 198, 0.13),
+          transparent 70%
+        );
+        bottom: -18%;
+        left: 12%;
+        --d: 17s;
+      }
+      .orb4 {
+        width: 36vw;
+        height: 36vw;
+        background: radial-gradient(
+          circle,
+          rgba(52, 199, 89, 0.11),
+          transparent 70%
+        );
+        bottom: 4%;
+        right: -6%;
+        --d: 9s;
+      }
+      [data-theme="dark"] .orb1 {
+        background: radial-gradient(
+          circle,
+          rgba(10, 132, 255, 0.3),
+          transparent 70%
+        );
+      }
+      [data-theme="dark"] .orb2 {
+        background: radial-gradient(
+          circle,
+          rgba(191, 90, 242, 0.26),
+          transparent 70%
+        );
+      }
+      [data-theme="dark"] .orb3 {
+        background: radial-gradient(
+          circle,
+          rgba(64, 200, 224, 0.2),
+          transparent 70%
+        );
+      }
+      [data-theme="dark"] .orb4 {
+        background: radial-gradient(
+          circle,
+          rgba(48, 209, 88, 0.17),
+          transparent 70%
+        );
+      }
+      @keyframes orbDrift {
+        0% {
+          transform: translate(0, 0) scale(1);
+        }
+        33% {
+          transform: translate(5%, 9%) scale(1.07);
+        }
+        66% {
+          transform: translate(-4%, 13%) scale(0.94);
+        }
+        100% {
+          transform: translate(9%, -6%) scale(1.06);
+        }
+      }
+
+      /* Particles */
+      .particles {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.55);
+        animation: pFloat var(--pd, 8s) ease-in-out infinite;
+        opacity: 0;
+      }
+      .p1 {
+        width: 4px;
+        height: 4px;
+        left: 14%;
+        top: 22%;
+        --pd: 7s;
+      }
+      .p2 {
+        width: 3px;
+        height: 3px;
+        left: 77%;
+        top: 33%;
+        --pd: 9s;
+        animation-delay: -3s;
+      }
+      .p3 {
+        width: 5px;
+        height: 5px;
+        left: 42%;
+        top: 62%;
+        --pd: 11s;
+        animation-delay: -6s;
+      }
+      .p4 {
+        width: 3px;
+        height: 3px;
+        left: 87%;
+        top: 74%;
+        --pd: 8s;
+        animation-delay: -2s;
+      }
+      .p5 {
+        width: 4px;
+        height: 4px;
+        left: 28%;
+        top: 84%;
+        --pd: 10s;
+        animation-delay: -5s;
+      }
+      @keyframes pFloat {
+        0% {
+          opacity: 0;
+          transform: translateY(0) scale(0);
+        }
+        20% {
+          opacity: 0.45;
+          transform: translateY(-20px) scale(1);
+        }
+        80% {
+          opacity: 0.2;
+          transform: translateY(-90px) scale(0.75);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-130px) scale(0);
+        }
+      }
+
+      /* ── LAYOUT ── */
+      #app {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100dvh;
+      }
+
+      /* Desktop: 2-column grid */
+      @media (min-width: 768px) {
+        #app {
+          max-width: 100%;
+        }
+        .app-body {
+          display: grid;
+          grid-template-columns: 400px 1fr;
+          flex: 1;
+          overflow: hidden;
+          min-height: 0;
+        }
+        .scroll-content {
+          height: calc(100dvh - 60px);
+          padding-bottom: calc(88px + var(--safe-b));
+          border-right: 0.5px solid var(--sep);
+        }
+        .desktop-col {
+          display: flex;
+          flex-direction: column;
+          overflow-y: auto;
+          background: rgba(0, 0, 0, 0.1);
+          padding: 20px;
+          gap: 14px;
+          align-items: center;
+        }
+        .desktop-col .prev-nav {
+          width: 100%;
+          max-width: 760px;
+        }
+        .desktop-col .preview-wrap {
+          width: 100%;
+          max-width: 760px;
+        }
+        .tab-bar {
+          position: sticky;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          max-width: 400px;
+          border-radius: 0 !important;
+          border-top: 0.5px solid var(--border);
+          transform: none !important;
+          opacity: 1 !important;
+        }
+        /* Hide mobile-only preview tab btn on desktop */
+        .tab-btn.ghost {
+          display: none;
+        }
+        /* Show main seg on desktop too but hide preview panel */
+        #panelPreview {
+          display: none !important;
+        }
+      }
+      @media (max-width: 767px) {
+        #app {
+          max-width: 100%;
+        }
+        .app-body {
+          display: contents;
+        }
+        .desktop-col {
+          display: none;
+        }
+        #panelPreview {
+          display: block;
+        }
+      }
+
+      /* ── NAVBAR ── */
+      .nav-bar {
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        padding: calc(var(--safe-t) + 12px) 18px 12px;
+        background: var(--glass);
+        backdrop-filter: var(--blur-md);
+        -webkit-backdrop-filter: var(--blur-md);
+        border-bottom: 0.5px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        box-shadow:
+          0 1px 0 var(--sep),
+          var(--sh-sm);
+      }
+      .nav-title {
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: -0.4px;
+        flex: 1;
+        text-align: center;
+        background: linear-gradient(135deg, var(--blue), var(--purple));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .nav-icon-btn {
+        width: 36px;
+        height: 36px;
+        background: var(--fill2);
+        backdrop-filter: var(--blur-sm);
+        -webkit-backdrop-filter: var(--blur-sm);
+        border: 0.5px solid var(--border);
+        border-radius: var(--r-f);
+        font-size: 17px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text);
+        transition: all 0.2s;
+        box-shadow: var(--sh-sm);
+        flex-shrink: 0;
+      }
+      .nav-icon-btn:active {
+        transform: scale(0.88);
+        opacity: 0.7;
+      }
+      .nav-pill-btn {
+        background: var(--fill2);
+        border: 0.5px solid var(--border);
+        border-radius: var(--r-f);
+        padding: 7px 14px;
+        font-family: var(--f);
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--red);
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      .nav-pill-btn:active {
+        transform: scale(0.93);
+        opacity: 0.7;
+      }
+
+      /* ── TAB BAR (floating, mobile) ── */
+      .tab-bar {
+        position: fixed;
+        bottom: calc(var(--safe-b) + 14px);
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 28px);
+        max-width: 402px;
+        z-index: 200;
+        padding: 10px 12px;
+        background: var(--glass-strong);
+        backdrop-filter: var(--blur-lg);
+        -webkit-backdrop-filter: var(--blur-lg);
+        border: 0.5px solid var(--border);
+        border-radius: var(--r-xl);
+        display: flex;
+        gap: 8px;
+        box-shadow:
+          var(--sh-lg),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        transition:
+          transform 0.42s cubic-bezier(0.32, 0.72, 0, 1),
+          opacity 0.3s;
+      }
+      [data-theme="dark"] .tab-bar {
+        box-shadow:
+          var(--sh-lg),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+      .tab-bar.hide {
+        transform: translateX(-50%) translateY(130%);
+        opacity: 0;
+      }
+      .tab-btn {
+        flex: 1;
+        padding: 12px 8px;
+        border: none;
+        border-radius: calc(var(--r-xl) - 8px);
+        font-family: var(--f);
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        letter-spacing: -0.15px;
+        position: relative;
+        overflow: hidden;
+      }
+      .tab-btn::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: rgba(255, 255, 255, 0.2);
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .tab-btn:active::after {
+        opacity: 1;
+      }
+      .tab-btn:active {
+        transform: scale(0.94);
+      }
+      .tab-btn.primary {
+        background: linear-gradient(135deg, var(--blue), #4facfe);
+        color: #fff;
+        box-shadow:
+          0 4px 20px var(--blue-g),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+      .tab-btn.accent {
+        background: linear-gradient(135deg, var(--indigo), var(--purple));
+        color: #fff;
+        box-shadow:
+          0 4px 20px rgba(88, 86, 214, 0.35),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
+      .tab-btn.ghost {
+        background: var(--fill2);
+        color: var(--blue);
+        border: 0.5px solid var(--border);
+      }
+
+      /* ── SCROLL ── */
+      .scroll-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 14px 14px calc(110px + var(--safe-b));
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+      .scroll-content::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* ── MAIN SEGMENTED (with sliding pill) ── */
+      .main-seg {
+        position: relative;
+        display: flex;
+        background: var(--fill2);
+        backdrop-filter: var(--blur-sm);
+        -webkit-backdrop-filter: var(--blur-sm);
+        border: 0.5px solid var(--border);
+        border-radius: var(--r-md);
+        padding: 3px;
+        margin-bottom: 14px;
+        box-shadow: var(--sh-sm);
+        overflow: hidden;
+      }
+      .seg-glider {
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        border-radius: calc(var(--r-md) - 3px);
+        background: var(--surface-thick);
+        backdrop-filter: var(--blur-sm);
+        -webkit-backdrop-filter: var(--blur-sm);
+        box-shadow:
+          var(--sh-sm),
+          inset 0 1px 0 rgba(255, 255, 255, 0.65);
+        border: 0.5px solid var(--border);
+        pointer-events: none;
+        z-index: 0;
+        transition:
+          left 0.38s cubic-bezier(0.34, 1.56, 0.64, 1),
+          width 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .main-seg-btn {
+        flex: 1;
+        padding: 10px 8px;
+        border: none;
+        border-radius: calc(var(--r-md) - 3px);
+        font-family: var(--f);
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        background: transparent;
+        color: var(--text2);
+        transition:
+          color 0.3s,
+          font-weight 0.25s;
+        position: relative;
+        z-index: 1;
+      }
+      .main-seg-btn.active {
+        color: var(--text);
+        font-weight: 700;
+      }
+
+      /* ── PANELS with smooth horizontal slide ── */
+      .panels-host {
+        position: relative;
+        overflow: hidden;
+      }
+      .tab-panel {
+        display: none;
+      }
+      .tab-panel.active {
+        display: block;
+      }
+      @keyframes slideFromRight {
+        from {
+          opacity: 0;
+          transform: translateX(28px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes slideFromLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-28px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .slide-in-right {
+        animation: slideFromRight 0.34s cubic-bezier(0.4, 0, 0.2, 1) both;
+      }
+      .slide-in-left {
+        animation: slideFromLeft 0.34s cubic-bezier(0.4, 0, 0.2, 1) both;
+      }
+
+      /* ── SECTION LABEL ── */
+      .section-label {
+        font-size: 0.69rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text2);
+        padding: 0 6px;
+        margin: 16px 0 8px;
+      }
+      .section-label:first-child {
+        margin-top: 4px;
+      }
+
+      /* ── GLASS CARD ── */
+      .glass-card {
+        background: var(--surface);
+        backdrop-filter: var(--blur-md);
+        -webkit-backdrop-filter: var(--blur-md);
+        border-radius: var(--r-lg);
+        border: 0.5px solid var(--border);
+        box-shadow:
+          var(--sh-md),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        margin-bottom: 14px;
+        overflow: hidden;
+        transition: box-shadow 0.3s;
+        animation: cardIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      [data-theme="dark"] .glass-card {
+        box-shadow:
+          var(--sh-md),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      }
+      @keyframes cardIn {
+        from {
+          opacity: 0;
+          transform: translateY(18px) scale(0.96);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .glass-card:nth-child(2) {
+        animation-delay: 0.05s;
+      }
+      .glass-card:nth-child(3) {
+        animation-delay: 0.1s;
+      }
+      .glass-card:nth-child(4) {
+        animation-delay: 0.15s;
+      }
+      .glass-card:nth-child(5) {
+        animation-delay: 0.2s;
+      }
+      .glass-card-body {
+        padding: 14px 16px 16px;
+      }
+
+      /* ── FORM ELEMENTS ── */
+      .form-row {
+        margin-bottom: 13px;
+      }
+      .form-row:last-child {
+        margin-bottom: 0;
+      }
+      .form-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text2);
+        margin-bottom: 7px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .badge {
+        font-size: 0.6rem;
+        font-weight: 600;
+        padding: 2px 7px;
+        border-radius: var(--r-f);
+        background: var(--fill2);
+        color: var(--text3);
+        text-transform: none;
+        letter-spacing: 0;
+        border: 0.5px solid var(--sep);
+      }
+      .req {
+        color: var(--red);
+        font-size: 0.65rem;
+      }
+
+      .ios-input {
+        width: 100%;
+        background: var(--fill3);
+        border: 1px solid transparent;
+        border-radius: var(--r-sm);
+        color: var(--text);
+        padding: 12px 14px;
+        font-family: var(--f);
+        font-size: 0.98rem;
+        font-weight: 400;
+        outline: none;
+        transition: all 0.22s;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+      .ios-input::placeholder {
+        color: var(--text3);
+      }
+      .ios-input:focus {
+        background: var(--fill2);
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3.5px var(--blue-g);
+      }
+      .ios-input[type="number"]::-webkit-inner-spin-button,
+      .ios-input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+      }
+
+      .prefix-wrap {
+        display: flex;
+        align-items: center;
+        background: var(--fill3);
+        border: 1px solid transparent;
+        border-radius: var(--r-sm);
+        overflow: hidden;
+        transition: all 0.22s;
+      }
+      .prefix-wrap:focus-within {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3.5px var(--blue-g);
+        background: var(--fill2);
+      }
+      .prefix-text {
+        padding: 12px 0 12px 14px;
+        font-size: 0.98rem;
+        font-weight: 500;
+        color: var(--text2);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .prefix-wrap .ios-input {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding-left: 6px;
+        border-radius: 0;
+      }
+      .prefix-wrap .ios-input:focus {
+        background: transparent;
+        border-color: transparent;
+        box-shadow: none;
+      }
+
+      .modul-wrap {
+        display: flex;
+        align-items: center;
+        background: var(--fill3);
+        border: 1px solid transparent;
+        border-radius: var(--r-sm);
+        overflow: hidden;
+        transition: all 0.22s;
+      }
+      .modul-wrap:focus-within {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3.5px var(--blue-g);
+      }
+      .modul-prefix {
+        padding: 12px 8px 12px 14px;
+        font-size: 0.98rem;
+        font-weight: 700;
+        color: var(--blue);
+        white-space: nowrap;
+        flex-shrink: 0;
+        background: rgba(0, 122, 255, 0.08);
+        border-right: 0.5px solid var(--sep);
+      }
+      .modul-wrap .ios-input {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        font-weight: 700;
+        color: var(--blue);
+        text-align: center;
+        padding-left: 10px;
+        border-radius: 0;
+        font-size: 1.1rem;
+        max-width: 90px;
+      }
+      .modul-wrap .ios-input:focus {
+        background: transparent;
+        border-color: transparent;
+        box-shadow: none;
+      }
+
+      /* 2-col dim grid (logo & margin) */
+      .dim-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .dim-label {
+        font-size: 0.68rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--text3);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+      .dim-wrap {
+        display: flex;
+        align-items: center;
+        background: var(--fill3);
+        border: 1px solid transparent;
+        border-radius: var(--r-sm);
+        overflow: hidden;
+        transition: all 0.22s;
+      }
+      .dim-wrap:focus-within {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px var(--blue-g);
+      }
+      .dim-wrap .ios-input {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        text-align: center;
+        font-weight: 700;
+        color: var(--blue);
+        font-size: 1.05rem;
+        border-radius: 0;
+        padding-right: 4px;
+      }
+      .dim-wrap .ios-input:focus {
+        background: transparent;
+        border-color: transparent;
+        box-shadow: none;
+      }
+      .dim-unit {
+        padding: 0 10px 0 2px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text3);
+        flex-shrink: 0;
+      }
+
+      /* Kelas segmented with pill */
+      .kelas-ctrl {
+        position: relative;
+        display: flex;
+        background: var(--fill3);
+        border-radius: var(--r-sm);
+        padding: 3px;
+        gap: 0;
+        overflow: hidden;
+      }
+      .kelas-pill {
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        background: var(--surface-thick);
+        backdrop-filter: var(--blur-sm);
+        -webkit-backdrop-filter: var(--blur-sm);
+        border-radius: calc(var(--r-sm) - 2px);
+        box-shadow:
+          var(--sh-sm),
+          inset 0 1px 0 rgba(255, 255, 255, 0.55);
+        border: 0.5px solid var(--border);
+        pointer-events: none;
+        z-index: 0;
+        transition:
+          left 0.38s cubic-bezier(0.34, 1.56, 0.64, 1),
+          width 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .kelas-btn {
+        flex: 1;
+        padding: 10px 6px;
+        border: none;
+        border-radius: calc(var(--r-sm) - 2px);
+        font-family: var(--f);
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text2);
+        background: transparent;
+        cursor: pointer;
+        transition:
+          color 0.28s,
+          font-weight 0.28s;
+        position: relative;
+        z-index: 1;
+      }
+      .kelas-btn.active {
+        color: var(--blue);
+        font-weight: 700;
+      }
+
+      .ios-select {
+        width: 100%;
+        background: var(--fill3);
+        border: 1px solid transparent;
+        border-radius: var(--r-sm);
+        color: var(--text);
+        padding: 12px 38px 12px 14px;
+        font-family: var(--f);
+        font-size: 0.98rem;
+        outline: none;
+        -webkit-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%238E8E93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        cursor: pointer;
+        transition: all 0.22s;
+      }
+      .ios-select:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3.5px var(--blue-g);
+        background-color: var(--fill2);
+      }
+      .ios-select option {
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .g2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      /* Asisten */
+      .asisten-item {
+        background: var(--fill4);
+        border-radius: var(--r-sm);
+        border: 0.5px solid var(--sep);
+        padding: 12px;
+        margin-bottom: 8px;
+        position: relative;
+        animation: cardIn 0.3s ease both;
+      }
+      .asisten-item input {
+        margin-bottom: 8px;
+      }
+      .asisten-item input:last-of-type {
+        margin-bottom: 0;
+      }
+      .asisten-remove {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 22px;
+        height: 22px;
+        background: rgba(255, 59, 48, 0.14);
+        border: none;
+        border-radius: 50%;
+        font-size: 11px;
+        color: var(--red);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .asisten-remove:active {
+        transform: scale(0.85);
+        background: rgba(255, 59, 48, 0.28);
+      }
+      .sub-label {
+        font-size: 0.67rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: var(--text3);
+        margin-bottom: 4px;
+      }
+      .add-asisten-btn {
+        width: 100%;
+        padding: 12px;
+        background: rgba(0, 122, 255, 0.06);
+        border: 1.5px dashed rgba(0, 122, 255, 0.28);
+        border-radius: var(--r-sm);
+        font-family: var(--f);
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--blue);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .add-asisten-btn:active {
+        background: rgba(0, 122, 255, 0.12);
+        transform: scale(0.98);
+      }
+
+      .alert-msg {
+        background: rgba(255, 59, 48, 0.09);
+        border: 1px solid rgba(255, 59, 48, 0.22);
+        border-radius: var(--r-md);
+        padding: 12px 16px;
+        font-size: 0.84rem;
+        font-weight: 500;
+        color: var(--red);
+        margin-bottom: 14px;
+        display: none;
+        animation: shake 0.4s ease;
+      }
+      .alert-msg.show {
+        display: block;
+      }
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20%,
+        60% {
+          transform: translateX(-6px);
+        }
+        40%,
+        80% {
+          transform: translateX(6px);
+        }
+      }
+
+      /* ── PREVIEW ── */
+      .prev-nav {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+      .prev-nav-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: var(--r-sm);
+        font-family: var(--f);
+        font-size: 0.83rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        background: var(--fill2);
+        color: var(--text2);
+        border: 0.5px solid var(--border);
+      }
+      .prev-nav-btn.active {
+        background: linear-gradient(135deg, var(--blue), #4facfe);
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 4px 16px var(--blue-g);
+      }
+      .preview-wrap {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: var(--r-lg);
+        overflow: hidden;
+        border: 0.5px solid var(--border);
+        box-shadow: var(--sh-lg);
+      }
+      .scale-outer {
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+      }
+      .scaler {
+        width: 794px;
+        transform-origin: top left;
+      }
+      .preview-page {
+        width: 794px;
+        min-height: 1123px;
+        background: #fff;
+        display: none;
+      }
+      .preview-page.active {
+        display: block;
+      }
+      .page-inner {
+        width: 100%;
+        min-height: 1123px;
+        padding: 57px 57px 57px 85px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #000;
+        font-family: "Times New Roman", Times, serif;
+        font-size: 12pt;
+        line-height: 1.5;
+      }
+
+      /* Cover page 1 */
+      .cv-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        text-align: center;
+      }
+      .cv-modul {
+        font-family: "Times New Roman", serif;
+        font-size: 14pt;
+        font-weight: bold;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+      }
+      .cv-title {
+        font-family: "Times New Roman", serif;
+        font-size: 14pt;
+        font-weight: bold;
+        text-align: center;
+        text-transform: uppercase;
+        line-height: 1.4;
+        margin-bottom: 4px;
+      }
+      .cv-course {
+        font-family: "Times New Roman", serif;
+        font-size: 14pt;
+        font-weight: bold;
+        text-align: center;
+        color: #000;
+      }
+      .cv-oleh {
+        font-family: "Times New Roman", serif;
+        font-size: 12pt;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .cv-student-table {
+        font-family: "Times New Roman", serif;
+        font-size: 12pt;
+        font-weight: bold;
+        border-collapse: collapse;
+        text-align: left;
+      }
+      .cv-student-table td {
+        padding: 3px 5px;
+        vertical-align: top;
+      }
+      .cv-logo-wrap {
+        display: flex;
+        justify-content: center;
+      }
+      .cv-footer-block {
+        width: 100%;
+        text-align: center;
+      }
+      .cv-footer-text {
+        font-family: "Times New Roman", serif;
+        font-size: 12pt;
+        font-weight: bold;
+        text-align: center;
+        text-transform: uppercase;
+        line-height: 1.6;
+        color: #000;
+      }
+
+      /* Cover page 2 */
+      .p2-sign-block {
+        text-align: left;
+      }
+      .p2-sign-space {
+        height: 68px;
+      }
+      .p2-sign-name {
+        font-weight: bold;
+      }
+
+      /* ── SETTINGS SHEET ── */
+      .sheet-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 400;
+        background: transparent;
+        display: none;
+        pointer-events: none;
+        transition: background 0.35s ease;
+      }
+      .sheet-overlay.open {
+        display: block;
+        pointer-events: all;
+        background: rgba(0, 0, 0, 0.26);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+      }
+      .bottom-sheet {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        z-index: 401;
+        width: 100%;
+        max-width: 430px;
+        max-height: 92dvh;
+        background: var(--glass-strong);
+        backdrop-filter: var(--blur-lg);
+        -webkit-backdrop-filter: var(--blur-lg);
+        border-radius: 24px 24px 0 0;
+        border-top: 0.5px solid var(--border);
+        box-shadow:
+          0 -8px 48px rgba(0, 0, 0, 0.16),
+          inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        display: flex;
+        flex-direction: column;
+        padding-bottom: calc(var(--safe-b) + 8px);
+        overflow: hidden;
+        transform-origin: 50% 0%;
+        transform: translateX(-50%) translateY(110%) scale(0.78);
+        transition:
+          transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+          opacity 0.3s;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .bottom-sheet.open {
+        transform: translateX(-50%) translateY(0) scale(1);
+        opacity: 1;
+        pointer-events: all;
+      }
+      .sheet-handle {
+        width: 36px;
+        height: 5px;
+        background: var(--sep);
+        border-radius: 3px;
+        margin: 10px auto 6px;
+        flex-shrink: 0;
+      }
+      .sheet-header {
+        padding: 4px 18px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 0.5px solid var(--sep);
+        flex-shrink: 0;
+      }
+      .sheet-title {
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--text);
+        letter-spacing: -0.3px;
+      }
+      .sheet-close {
+        width: 28px;
+        height: 28px;
+        background: var(--fill2);
+        border: none;
+        border-radius: 50%;
+        font-size: 12px;
+        color: var(--text2);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .sheet-close:active {
+        transform: scale(0.85);
+      }
+      .sheet-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 18px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .sheet-scroll::-webkit-scrollbar {
+        display: none;
+      }
+
+      .setting-card {
+        background: var(--fill4);
+        border: 0.5px solid var(--sep);
+        border-radius: var(--r-md);
+        margin-bottom: 10px;
+        overflow: hidden;
+      }
+      .setting-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-bottom: 0.5px solid var(--sep);
+      }
+      .setting-row:last-child {
+        border-bottom: none;
+      }
+
+      /* Theme toggle card */
+      .theme-card {
+        background: var(--fill4);
+        border: 0.5px solid var(--sep);
+        border-radius: var(--r-md);
+        padding: 16px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+      .theme-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 200, 0, 0.07),
+          rgba(255, 150, 0, 0.04)
+        );
+        opacity: 0;
+        transition: opacity 0.4s;
+      }
+      [data-theme="dark"] .theme-card::before {
+        opacity: 1;
+      }
+      [data-theme="dark"] .theme-card {
+        background: linear-gradient(
+          135deg,
+          rgba(18, 18, 40, 0.6),
+          rgba(28, 28, 60, 0.5)
+        );
+        border-color: rgba(255, 200, 0, 0.18);
+      }
+      .theme-card:active {
+        transform: scale(0.98);
+      }
+      .theme-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .theme-icon-box {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        flex-shrink: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 220, 50, 0.18),
+          rgba(255, 170, 0, 0.09)
+        );
+        border: 1px solid rgba(255, 200, 0, 0.18);
+        transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      [data-theme="dark"] .theme-icon-box {
+        background: linear-gradient(
+          135deg,
+          rgba(30, 50, 110, 0.4),
+          rgba(80, 80, 190, 0.2)
+        );
+        border-color: rgba(100, 150, 255, 0.28);
+      }
+      .theme-icon {
+        display: block;
+        transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .theme-card:active .theme-icon {
+        transform: rotate(35deg) scale(1.25);
+      }
+      .theme-text {
+        flex: 1;
+      }
+      .theme-main {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .theme-sub {
+        font-size: 0.75rem;
+        color: var(--text2);
+        margin-top: 2px;
+      }
+
+      /* Rotating arrow theme button */
+      .theme-flip-btn {
+        width: 38px;
+        height: 38px;
+        background: var(--fill2);
+        border: 0.5px solid var(--border);
+        border-radius: 50%;
+        font-size: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+        flex-shrink: 0;
+        color: var(--text2);
+      }
+      .theme-flip-btn:active {
+        background: var(--fill1);
+      }
+      .theme-flip-btn svg {
+        transition: none;
+      }
+      @keyframes spinAround {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .theme-flip-btn.spinning svg {
+        animation: spinAround 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .margin-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .margin-label {
+        font-size: 0.68rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--text3);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+
+      /* Feedback */
+      .feedback-card {
+        background: var(--fill4);
+        border: 0.5px solid var(--sep);
+        border-radius: var(--r-md);
+        padding: 14px 16px;
+        margin-bottom: 10px;
+      }
+      .feedback-ta {
+        width: 100%;
+        background: var(--fill3);
+        border: 1px solid transparent;
+        border-radius: var(--r-sm);
+        color: var(--text);
+        padding: 10px 12px;
+        font-family: var(--f);
+        font-size: 0.9rem;
+        resize: none;
+        min-height: 80px;
+        outline: none;
+        transition: all 0.22s;
+      }
+      .feedback-ta:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3.5px var(--blue-g);
+        background: var(--fill2);
+      }
+      .feedback-ta::placeholder {
+        color: var(--text3);
+      }
+      .feedback-btns {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .fb-btn {
+        flex: 1;
+        padding: 11px 8px;
+        border: none;
+        border-radius: var(--r-sm);
+        font-family: var(--f);
+        font-size: 0.84rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.22s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .fb-btn:active {
+        transform: scale(0.95);
+        opacity: 0.85;
+      }
+      .fb-email {
+        background: linear-gradient(135deg, #ea4335, #c5221f);
+        color: #fff;
+        box-shadow: 0 3px 12px rgba(234, 67, 53, 0.35);
+      }
+      .fb-wa {
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: #fff;
+        box-shadow: 0 3px 12px rgba(37, 211, 102, 0.3);
+      }
+
+      /* Credits */
+      .credits {
+        margin-top: 24px;
+        padding: 14px;
+        text-align: center;
+        opacity: 0.52;
+        transition: opacity 0.2s;
+      }
+      .credits:hover {
+        opacity: 0.8;
+      }
+      .credits-name {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--text2);
+        letter-spacing: 0.2px;
+        margin-bottom: 6px;
+      }
+      .credits-year {
+        font-size: 0.64rem;
+        color: var(--text3);
+      }
+      .credits-socials {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+      .credits-social-link {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: var(--fill2);
+        border: 0.5px solid var(--sep);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        text-decoration: none;
+        transition: all 0.2s;
+      }
+      .credits-social-link:active {
+        transform: scale(0.88);
+      }
+
+      /* App footer */
+      .app-footer {
+        padding: 48px 16px 28px;
+        text-align: center;
+        color: var(--text4);
+        font-size: 0.65rem;
+        letter-spacing: 0.3px;
+        line-height: 1.9;
+        opacity: 0.5;
+      }
+
+      /* Toast */
+      .toast {
+        position: fixed;
+        bottom: calc(108px + var(--safe-b));
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--glass-strong);
+        backdrop-filter: var(--blur-lg);
+        -webkit-backdrop-filter: var(--blur-lg);
+        border: 0.5px solid var(--border);
+        border-radius: var(--r-f);
+        padding: 12px 22px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--text);
+        opacity: 0;
+        z-index: 9999;
+        pointer-events: none;
+        box-shadow: var(--sh-md);
+        transition: all 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+        max-width: 86vw;
+        text-align: center;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .mt8 {
+        margin-top: 8px;
+      }
+      .mt12 {
+        margin-top: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-layer">
+      <div class="orb orb1"></div>
+      <div class="orb orb2"></div>
+      <div class="orb orb3"></div>
+      <div class="orb orb4"></div>
+    </div>
+    <div class="particles">
+      <div class="particle p1"></div>
+      <div class="particle p2"></div>
+      <div class="particle p3"></div>
+      <div class="particle p4"></div>
+      <div class="particle p5"></div>
+    </div>
+
+    <div id="app">
+      <div class="nav-bar">
+        <button
+          class="nav-icon-btn"
+          id="settingsBtn"
+          onclick="openSettings(this)"
+        >
+          ⚙️
+        </button>
+        <div class="nav-title">Cover Generator</div>
+        <button class="nav-pill-btn" onclick="resetForm()">↺ Reset</button>
+      </div>
+
+      <div class="app-body">
+        <!-- LEFT: FORM COLUMN -->
+        <div class="scroll-content" id="scrollContent">
+          <div class="main-seg" id="mainSeg">
+            <div class="seg-glider" id="segGlider"></div>
+            <button
+              class="main-seg-btn active"
+              id="tabFormBtn"
+              onclick="switchTab('form', 0)"
+            >
+              ✏️ Isi Data
+            </button>
+            <button
+              class="main-seg-btn"
+              id="tabPrevBtn"
+              onclick="switchTab('preview', 1)"
+            >
+              👁 Preview
+            </button>
+          </div>
+
+          <!-- FORM PANEL -->
+          <div class="tab-panel active" id="panelForm">
+            <div class="alert-msg" id="alertMsg"></div>
+
+            <div class="section-label">Informasi Modul</div>
+            <div class="glass-card">
+              <div class="glass-card-body">
+                <div class="form-row">
+                  <div class="form-label">
+                    Nomor Modul <span class="req">*</span>
+                  </div>
+                  <div class="modul-wrap">
+                    <span class="modul-prefix">MODUL</span>
+                    <input
+                      class="ios-input"
+                      type="number"
+                      id="nomorModul"
+                      value="1"
+                      min="1"
+                      max="99"
+                      oninput="updatePreview()"
+                    />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-label">
+                    Judul Modul <span class="req">*</span>
+                  </div>
+                  <input
+                    class="ios-input"
+                    type="text"
+                    id="judulModul"
+                    placeholder="JUDUL MODUL PRAKTIKUM"
+                    oninput="updatePreview()"
+                  />
+                </div>
+                <div class="form-row">
+                  <div class="form-label">
+                    Mata Kuliah <span class="req">*</span>
+                  </div>
+                  <div class="prefix-wrap">
+                    <span class="prefix-text">Laporan Praktikum </span>
+                    <input
+                      class="ios-input"
+                      type="text"
+                      id="mataKuliah"
+                      placeholder="Nama Matkul"
+                      oninput="updatePreview()"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-label">Data Mahasiswa</div>
+            <div class="glass-card">
+              <div class="glass-card-body">
+                <div class="form-row">
+                  <div class="form-label">
+                    Nama Lengkap <span class="req">*</span>
+                  </div>
+                  <input
+                    class="ios-input"
+                    type="text"
+                    id="namaM"
+                    placeholder="Nama Lengkap"
+                    oninput="updatePreview()"
+                  />
+                </div>
+                <div class="form-row">
+                  <div class="form-label">NIM <span class="req">*</span></div>
+                  <input
+                    class="ios-input"
+                    type="text"
+                    id="nimM"
+                    placeholder="Nomor Induk Mahasiswa"
+                    oninput="updatePreview()"
+                  />
+                </div>
+                <div class="form-row">
+                  <div class="form-label">Kelas <span class="req">*</span></div>
+                  <div class="kelas-ctrl" id="kelasCtrl">
+                    <div class="kelas-pill" id="kelasPill"></div>
+                    <button
+                      class="kelas-btn active"
+                      onclick="setKelas('RA', 0)"
+                    >
+                      RA
+                    </button>
+                    <button class="kelas-btn" onclick="setKelas('RB', 1)">
+                      RB
+                    </button>
+                    <button class="kelas-btn" onclick="setKelas('RC', 2)">
+                      RC
+                    </button>
+                  </div>
+                  <input type="hidden" id="kelasM" value="RA" />
+                </div>
+                <div class="form-row">
+                  <div class="form-label">
+                    Kelompok <span class="badge">Opsional</span>
+                  </div>
+                  <input
+                    class="ios-input"
+                    type="text"
+                    id="kelompokM"
+                    placeholder="Kosongkan jika tidak ada"
+                    oninput="updatePreview()"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="section-label">Asisten Praktikum</div>
+            <div class="glass-card">
+              <div class="glass-card-body">
+                <div id="assistantList"></div>
+                <button class="add-asisten-btn" onclick="addAssistant()">
+                  ＋ Tambah Asisten
+                </button>
+                <div
+                  id="asitenDropRow"
+                  class="form-row mt12"
+                  style="display: none"
+                >
+                  <div class="form-label">Asisten Pengesah (Hal. 2)</div>
+                  <select
+                    class="ios-select"
+                    id="selectedAsisten"
+                    onchange="updatePreview()"
+                  ></select>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-label">Ukuran Logo</div>
+            <div class="glass-card">
+              <div class="glass-card-body">
+                <div class="form-row">
+                  <div class="form-label">Dimensi Logo</div>
+                  <div class="dim-grid">
+                    <div>
+                      <div class="dim-label">↔ Lebar</div>
+                      <div class="dim-wrap">
+                        <input
+                          class="ios-input"
+                          type="number"
+                          id="logoW"
+                          value="4"
+                          min="1"
+                          max="12"
+                          oninput="updatePreview()"
+                        />
+                        <span class="dim-unit">cm</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="dim-label">↕ Tinggi</div>
+                      <div class="dim-wrap">
+                        <input
+                          class="ios-input"
+                          type="number"
+                          id="logoH"
+                          value="4"
+                          min="1"
+                          max="12"
+                          oninput="updatePreview()"
+                        />
+                        <span class="dim-unit">cm</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-label">Lembar Pengesahan</div>
+            <div class="glass-card">
+              <div class="glass-card-body">
+                <div class="form-row">
+                  <div class="form-label">
+                    Tanggal Praktikum <span class="req">*</span>
+                  </div>
+                  <input
+                    class="ios-input"
+                    type="date"
+                    id="tglPraktikum"
+                    oninput="updatePreview()"
+                  />
+                </div>
+                <div class="form-row">
+                  <div class="form-label">
+                    Tempat Praktikum <span class="req">*</span>
+                  </div>
+                  <select
+                    class="ios-select"
+                    id="lokasiPraktikum"
+                    onchange="updatePreview()"
+                  >
+                    <option value="">Pilih Tempat Praktikum</option>
+                    <option
+                      value="Laboratorium Rekayasa Instrumentasi dan Automasi"
+                    >
+                      Lab. Rekayasa Instrumentasi &amp; Automasi
+                    </option>
+                    <option value="Laboratorium Komputer">
+                      Laboratorium Komputer
+                    </option>
+                    <option value="Laboratorium Fisika">
+                      Laboratorium Fisika
+                    </option>
+                    <option value="Laboratorium Kimia">
+                      Laboratorium Kimia
+                    </option>
+                    <option value="Laboratorium Biologi">
+                      Laboratorium Biologi
+                    </option>
+                    <option value="Laboratorium Elektronika">
+                      Laboratorium Elektronika
+                    </option>
+                    <option value="Laboratorium Jaringan">
+                      Laboratorium Jaringan
+                    </option>
+                    <option value="Laboratorium Pemrograman">
+                      Laboratorium Pemrograman
+                    </option>
+                    <option value="Laboratorium Mesin">
+                      Laboratorium Mesin
+                    </option>
+                    <option value="Ruang Kelas">Ruang Kelas</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <div class="form-label">Tanggal Tanda Tangan</div>
+                  <div class="g2">
+                    <div>
+                      <div class="sub-label" style="margin-bottom: 5px">
+                        Tanggal
+                      </div>
+                      <input
+                        class="ios-input"
+                        type="number"
+                        id="sigDay"
+                        min="1"
+                        max="31"
+                        placeholder="19"
+                        oninput="updatePreview()"
+                      />
+                    </div>
+                    <div>
+                      <div class="sub-label" style="margin-bottom: 5px">
+                        Bulan
+                      </div>
+                      <select
+                        class="ios-select"
+                        id="sigMonth"
+                        onchange="updatePreview()"
+                      >
+                        <option>Januari</option>
+                        <option>Februari</option>
+                        <option>Maret</option>
+                        <option>April</option>
+                        <option>Mei</option>
+                        <option>Juni</option>
+                        <option>Juli</option>
+                        <option>Agustus</option>
+                        <option>September</option>
+                        <option>Oktober</option>
+                        <option>November</option>
+                        <option>Desember</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="app-footer">
+              Made by <strong>samuelslgn</strong><br />
+              Cover Generator © 2026
+            </div>
+          </div>
+          <!-- /panelForm -->
+
+          <!-- PREVIEW PANEL (mobile only) -->
+          <div class="tab-panel" id="panelPreview">
+            <div class="prev-nav">
+              <button
+                class="prev-nav-btn active"
+                id="prevBtn1"
+                onclick="showPage(1)"
+              >
+                📄 Halaman 1
+              </button>
+              <button class="prev-nav-btn" id="prevBtn2" onclick="showPage(2)">
+                📋 Halaman 2
+              </button>
+            </div>
+            <div class="preview-wrap">
+              <div class="scale-outer" id="mScaleOuter">
+                <div class="scaler" id="mScaler">
+                  <div class="preview-page active" id="mPage1">
+                    <div class="page-inner" id="mPage1Inner"></div>
+                  </div>
+                  <div class="preview-page" id="mPage2">
+                    <div
+                      class="page-inner"
+                      id="mPage2Inner"
+                      style="align-items: flex-start"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /panelPreview -->
+
+          <!-- FLOATING TAB BAR -->
+          <div class="tab-bar" id="tabBar">
+            <button class="tab-btn primary" onclick="exportPDF()">⬇ PDF</button>
+            <button class="tab-btn accent" onclick="exportDOCX()">
+              ⬇ DOCX
+            </button>
+            <button
+              class="tab-btn ghost"
+              onclick="
+                switchTab('preview', 1);
+                setTimeout(scaleAll, 60);
+              "
+            >
+              👁 Preview
+            </button>
+          </div>
+        </div>
+        <!-- /scroll-content -->
+
+        <!-- RIGHT: DESKTOP PREVIEW COLUMN -->
+        <div class="desktop-col" id="desktopCol">
+          <div class="prev-nav" style="width: 100%; max-width: 760px">
+            <button
+              class="prev-nav-btn active"
+              id="dPrevBtn1"
+              onclick="showPage(1)"
+            >
+              📄 Halaman 1
+            </button>
+            <button class="prev-nav-btn" id="dPrevBtn2" onclick="showPage(2)">
+              📋 Halaman 2
+            </button>
+          </div>
+          <div class="preview-wrap" style="width: 100%; max-width: 760px">
+            <div class="scale-outer" id="dScaleOuter">
+              <div class="scaler" id="dScaler">
+                <div class="preview-page active" id="dPage1">
+                  <div class="page-inner" id="dPage1Inner"></div>
+                </div>
+                <div class="preview-page" id="dPage2">
+                  <div
+                    class="page-inner"
+                    id="dPage2Inner"
+                    style="align-items: flex-start"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /app-body -->
+    </div>
+    <!-- /app -->
+
+    <!-- SETTINGS SHEET -->
+    <div
+      class="sheet-overlay"
+      id="sheetOverlay"
+      onclick="closeSettings()"
+    ></div>
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <span class="sheet-title">⚙️ Pengaturan</span>
+        <button class="sheet-close" onclick="closeSettings()">✕</button>
+      </div>
+      <div class="sheet-scroll">
+        <div class="section-label" style="margin-top: 0">Tampilan</div>
+        <div class="theme-card" onclick="toggleTheme()">
+          <div class="theme-row">
+            <div class="theme-icon-box">
+              <span class="theme-icon" id="themeIcon">☀️</span>
+            </div>
+            <div class="theme-text">
+              <div class="theme-main" id="themeMain">Mode Terang</div>
+              <div class="theme-sub" id="themeSub">
+                Ketuk untuk beralih ke mode gelap
+              </div>
+            </div>
+            <button
+              class="theme-flip-btn"
+              id="themeFlipBtn"
+              onclick="
+                event.stopPropagation();
+                toggleTheme();
+              "
+              title="Ganti tema"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="section-label mt12">Margin Halaman A4 (cm)</div>
+        <div class="setting-card">
+          <div class="setting-row">
+            <div class="margin-grid" style="width: 100%">
+              <div>
+                <div class="margin-label">↑ Atas</div>
+                <div class="dim-wrap">
+                  <input
+                    class="ios-input"
+                    type="number"
+                    id="mTop"
+                    value="2"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    oninput="updateMargins()"
+                  /><span class="dim-unit">cm</span>
+                </div>
+              </div>
+              <div>
+                <div class="margin-label">↓ Bawah</div>
+                <div class="dim-wrap">
+                  <input
+                    class="ios-input"
+                    type="number"
+                    id="mBottom"
+                    value="2"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    oninput="updateMargins()"
+                  /><span class="dim-unit">cm</span>
+                </div>
+              </div>
+              <div>
+                <div class="margin-label">← Kiri</div>
+                <div class="dim-wrap">
+                  <input
+                    class="ios-input"
+                    type="number"
+                    id="mLeft"
+                    value="3"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    oninput="updateMargins()"
+                  /><span class="dim-unit">cm</span>
+                </div>
+              </div>
+              <div>
+                <div class="margin-label">→ Kanan</div>
+                <div class="dim-wrap">
+                  <input
+                    class="ios-input"
+                    type="number"
+                    id="mRight"
+                    value="2"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    oninput="updateMargins()"
+                  /><span class="dim-unit">cm</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label mt12">Kirim Feedback</div>
+        <div class="feedback-card">
+          <div class="form-label" style="margin-bottom: 8px">Pesan Anda</div>
+          <textarea
+            class="feedback-ta"
+            id="feedbackText"
+            placeholder="Tulis masukan, saran, atau laporan bug…"
+            rows="3"
+          ></textarea>
+          <div class="feedback-btns">
+            <button class="fb-btn fb-email" onclick="sendFeedback('email')">
+              <svg width="15" height="11" viewBox="0 0 15 11" fill="none">
+                <rect
+                  x=".5"
+                  y=".5"
+                  width="14"
+                  height="10"
+                  rx="1.5"
+                  stroke="white"
+                  stroke-opacity=".8"
+                />
+                <path
+                  d="M1 1l6.5 5L14 1"
+                  stroke="white"
+                  stroke-opacity=".8"
+                  stroke-width="1.2"
+                  stroke-linecap="round"
+                />
+              </svg>
+              Email
+            </button>
+            <button class="fb-btn fb-wa" onclick="sendFeedback('wa')">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="white"
+                opacity=".9"
+              >
+                <path
+                  d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"
+                />
+                <path
+                  d="M12 0C5.373 0 0 5.373 0 12c0 2.096.536 4.07 1.475 5.79L0 24l6.384-1.449A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.793 9.793 0 01-5.02-1.383l-.36-.214-3.732.848.88-3.63-.235-.373A9.78 9.78 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"
+                />
+              </svg>
+              WhatsApp
+            </button>
+          </div>
+        </div>
+
+        <div class="credits">
+          <div class="credits-socials">
+            <a class="credits-social-link" href="#" title="Instagram">📸</a>
+            <a class="credits-social-link" href="#" title="GitHub">🐙</a>
+            <a class="credits-social-link" href="#" title="LinkedIn">💼</a>
+            <a class="credits-social-link" href="#" title="Twitter/X">🐦</a>
+          </div>
+          <div class="credits-name">Made by <strong>samuelslgn</strong></div>
+          <div class="credits-year">Cover Generator © 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const YEAR = new Date().getFullYear();
+      const MONTHS = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember",
+      ];
+      const LAB = "LABORATORIUM REKAYASA INSTRUMENTASI DAN AUTOMASI";
+      const FAK = "FAKULTAS TEKNOLOGI INDUSTRI";
+      const UNIV = "INSTITUT TEKNOLOGI SUMATERA";
+      const CM = 37.795;
+
+      let assistants = [],
+        isDark = false,
+        activeTab = "form",
+        activeIdx = 0,
+        lastScrollY = 0;
+
+      /* ── INIT ── */
+      document.addEventListener("DOMContentLoaded", () => {
+        const now = new Date();
+        document.getElementById("sigMonth").value = MONTHS[now.getMonth()];
+        document.getElementById("sigDay").value = now.getDate();
+        addAssistant();
+        loadStorage();
+        updatePreview();
+        initGliders();
+        scaleAll();
+        window.addEventListener("resize", () => {
+          scaleAll();
+          initGliders();
+        });
+
+        const sc = document.getElementById("scrollContent");
+        sc.addEventListener(
+          "scroll",
+          () => {
+            const y = sc.scrollTop;
+            const tb = document.getElementById("tabBar");
+            if (y > lastScrollY + 12) tb.classList.add("hide");
+            else if (y < lastScrollY - 12) tb.classList.remove("hide");
+            lastScrollY = y;
+          },
+          { passive: true },
+        );
+      });
+
+      /* ── STORAGE ── */
+      function save() {
+        try {
+          localStorage.setItem(
+            "cg7",
+            JSON.stringify({
+              nomorModul: g("nomorModul"),
+              judulModul: g("judulModul"),
+              mataKuliah: g("mataKuliah"),
+              namaM: g("namaM"),
+              nimM: g("nimM"),
+              kelasM: g("kelasM"),
+              kelompokM: g("kelompokM"),
+              tglPraktikum: g("tglPraktikum"),
+              lokasiPraktikum: g("lokasiPraktikum"),
+              sigDay: g("sigDay"),
+              sigMonth: g("sigMonth"),
+              logoW: g("logoW"),
+              logoH: g("logoH"),
+              mTop: g("mTop"),
+              mBottom: g("mBottom"),
+              mLeft: g("mLeft"),
+              mRight: g("mRight"),
+              assistants,
+              isDark,
+              selAsisten: document.getElementById("selectedAsisten").value,
+            }),
+          );
+        } catch (e) {}
+      }
+
+      function loadStorage() {
+        try {
+          const d = JSON.parse(localStorage.getItem("cg7") || "null");
+          if (!d) return;
+          [
+            "nomorModul",
+            "judulModul",
+            "mataKuliah",
+            "namaM",
+            "nimM",
+            "kelompokM",
+            "tglPraktikum",
+            "lokasiPraktikum",
+            "sigDay",
+            "sigMonth",
+            "logoW",
+            "logoH",
+            "mTop",
+            "mBottom",
+            "mLeft",
+            "mRight",
+          ].forEach((f) => {
+            if (d[f] !== undefined && document.getElementById(f))
+              document.getElementById(f).value = d[f];
+          });
+          if (d.kelasM)
+            setKelas(d.kelasM, ["RA", "RB", "RC"].indexOf(d.kelasM));
+          if (d.assistants?.length) {
+            assistants = d.assistants;
+            renderAssistants();
+          }
+          if (d.isDark) {
+            isDark = true;
+            applyTheme();
+          }
+          if (d.selAsisten)
+            setTimeout(() => {
+              document.getElementById("selectedAsisten").value = d.selAsisten;
+            }, 60);
+          updateMargins();
+        } catch (e) {}
+      }
+
+      function g(id) {
+        return document.getElementById(id)?.value?.trim() ?? "";
+      }
+      function esc(s) {
+        return (s || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+      function cmPx(c) {
+        return Math.round(parseFloat(c || 0) * CM);
+      }
+      function showToast(m) {
+        const t = document.getElementById("toast");
+        t.textContent = m;
+        t.classList.add("show");
+        clearTimeout(t._t);
+        t._t = setTimeout(() => t.classList.remove("show"), 3000);
+      }
+
+      /* ── GLIDERS (both main-seg and kelas pill) ── */
+      function initGliders() {
+        moveSeg(document.getElementById("tabFormBtn"));
+        const activeKelas = document.querySelector(".kelas-btn.active");
+        if (activeKelas) moveKelas(activeKelas);
+      }
+
+      function moveSeg(btn) {
+        const seg = document.getElementById("mainSeg");
+        const pill = document.getElementById("segGlider");
+        if (!seg || !pill) return;
+        const sr = seg.getBoundingClientRect();
+        const br = btn.getBoundingClientRect();
+        pill.style.left = br.left - sr.left + 3 + "px";
+        pill.style.width = br.width - 6 + "px";
+      }
+
+      function moveKelas(btn) {
+        const ctrl = document.getElementById("kelasCtrl");
+        const pill = document.getElementById("kelasPill");
+        if (!ctrl || !pill) return;
+        const cr = ctrl.getBoundingClientRect();
+        const br = btn.getBoundingClientRect();
+        pill.style.left = br.left - cr.left + 3 + "px";
+        pill.style.width = br.width - 6 + "px";
+      }
+
+      /* ── TABS (smooth horizontal slide) ── */
+      function switchTab(tab, idx) {
+        if (tab === activeTab) return;
+        const prev = activeTab;
+        activeTab = tab;
+        activeIdx = idx;
+        const goRight = idx > (prev === "form" ? 0 : 1);
+        const oldPanel = document.getElementById(
+          prev === "form" ? "panelForm" : "panelPreview",
+        );
+        const newPanel = document.getElementById(
+          tab === "form" ? "panelForm" : "panelPreview",
+        );
+
+        // Slide old out
+        oldPanel.style.position = "absolute";
+        oldPanel.style.width = "100%";
+        oldPanel.style.top = "0";
+        oldPanel.style.left = "0";
+        oldPanel.style.zIndex = "0";
+        oldPanel.style.animation = `${goRight ? "slideFromLeft" : "slideFromRight"} .3s cubic-bezier(.4,0,.2,1) reverse both`;
+        oldPanel.classList.remove("active");
+
+        setTimeout(() => {
+          oldPanel.style.cssText = "display:none";
+        }, 310);
+
+        // Slide new in
+        newPanel.style.cssText = "";
+        newPanel.style.animation = `${goRight ? "slideFromRight" : "slideFromLeft"} .34s cubic-bezier(.4,0,.2,1) both`;
+        newPanel.classList.add("active");
+
+        document
+          .getElementById("tabFormBtn")
+          .classList.toggle("active", tab === "form");
+        document
+          .getElementById("tabPrevBtn")
+          .classList.toggle("active", tab === "preview");
+
+        // Move glider pill
+        moveSeg(
+          document.getElementById(tab === "form" ? "tabFormBtn" : "tabPrevBtn"),
+        );
+
+        if (tab === "preview") {
+          updatePreview();
+          setTimeout(scaleAll, 60);
+        }
+        document.getElementById("tabBar").classList.remove("hide");
+      }
+
+      /* ── SHOW PAGE ── */
+      function showPage(n) {
+        ["mPage1", "mPage2", "dPage1", "dPage2"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el)
+            el.classList.toggle(
+              "active",
+              id.endsWith("Page" + n) || id.endsWith("age" + n),
+            );
+        });
+        // Fix: use endsWith trick properly
+        document.getElementById("mPage1")?.classList.toggle("active", n === 1);
+        document.getElementById("mPage2")?.classList.toggle("active", n === 2);
+        document.getElementById("dPage1")?.classList.toggle("active", n === 1);
+        document.getElementById("dPage2")?.classList.toggle("active", n === 2);
+        document
+          .getElementById("prevBtn1")
+          ?.classList.toggle("active", n === 1);
+        document
+          .getElementById("prevBtn2")
+          ?.classList.toggle("active", n === 2);
+        document
+          .getElementById("dPrevBtn1")
+          ?.classList.toggle("active", n === 1);
+        document
+          .getElementById("dPrevBtn2")
+          ?.classList.toggle("active", n === 2);
+        setTimeout(scaleAll, 30);
+      }
+
+      /* ── SCALE ── */
+      function scaleAll() {
+        _scale("mScaleOuter", "mScaler", ["mPage1", "mPage2"]);
+        _scale("dScaleOuter", "dScaler", ["dPage1", "dPage2"]);
+      }
+      function _scale(oid, sid, pids) {
+        const outer = document.getElementById(oid),
+          scaler = document.getElementById(sid);
+        if (!outer || !scaler) return;
+        const avail = outer.clientWidth;
+        if (!avail) return;
+        const scale = avail / 794;
+        scaler.style.transform = `scale(${scale})`;
+        const activeId = pids.find((id) =>
+          document.getElementById(id)?.classList.contains("active"),
+        );
+        const pg = activeId ? document.getElementById(activeId) : null;
+        outer.style.height =
+          Math.ceil((pg ? pg.offsetHeight : 1123) * scale) + "px";
+      }
+
+      /* ── KELAS ── */
+      function setKelas(val, idx) {
+        document.getElementById("kelasM").value = val;
+        const btns = document.querySelectorAll(".kelas-btn");
+        btns.forEach((b, i) => b.classList.toggle("active", i === idx));
+        requestAnimationFrame(() => moveKelas(btns[idx]));
+        updatePreview();
+        save();
+      }
+
+      /* ── MARGINS ── */
+      function updateMargins() {
+        const t = cmPx(g("mTop") || 2),
+          b = cmPx(g("mBottom") || 2);
+        const l = cmPx(g("mLeft") || 3),
+          r = cmPx(g("mRight") || 2);
+        document.querySelectorAll(".page-inner").forEach((el) => {
+          el.style.padding = `${t}px ${r}px ${b}px ${l}px`;
+        });
+        updatePreview();
+      }
+
+      /* ── ASSISTANTS ── */
+      function addAssistant() {
+        assistants.push({ nama: "", nim: "" });
+        renderAssistants();
+        updatePreview();
+      }
+      function removeAssistant(i) {
+        if (assistants.length <= 1) {
+          showToast("Minimal 1 asisten");
+          return;
+        }
+        assistants.splice(i, 1);
+        renderAssistants();
+        updatePreview();
+      }
+      function renderAssistants() {
+        document.getElementById("assistantList").innerHTML = assistants
+          .map(
+            (a, i) => `
+    <div class="asisten-item">
+      ${assistants.length > 1 ? `<button class="asisten-remove" onclick="removeAssistant(${i})">✕</button>` : ""}
+      <div class="sub-label">Nama Asisten ${i + 1}</div>
+      <input class="ios-input" type="text" placeholder="Nama" value="${esc(a.nama)}" oninput="updA(${i},'nama',this.value)">
+      <div class="sub-label mt8">NIM Asisten ${i + 1}</div>
+      <input class="ios-input" type="text" placeholder="NIM / ID" value="${esc(a.nim)}" oninput="updA(${i},'nim',this.value)">
+    </div>`,
+          )
+          .join("");
+        syncAsisDrop();
+      }
+      function updA(i, f, v) {
+        assistants[i][f] = v;
+        syncAsisDrop();
+        updatePreview();
+        save();
+      }
+      function syncAsisDrop() {
+        const sel = document.getElementById("selectedAsisten");
+        const row = document.getElementById("asitenDropRow");
+        const cur = sel.value;
+        if (assistants.length <= 1) {
+          row.style.display = "none";
+          sel.innerHTML = assistants[0]?.nama
+            ? `<option value="0">${esc(assistants[0].nama)}</option>`
+            : "";
+          sel.value = "0";
+        } else {
+          row.style.display = "block";
+          sel.innerHTML =
+            '<option value="">— Pilih Asisten —</option>' +
+            assistants
+              .map(
+                (a, i) =>
+                  `<option value="${i}" ${cur == i ? "selected" : ""}>${esc(a.nama || "Asisten " + (i + 1))}</option>`,
+              )
+              .join("");
+        }
+      }
+      function getAsisten() {
+        if (assistants.length === 1) return assistants[0];
+        const i = document.getElementById("selectedAsisten").value;
+        return i === "" ? null : assistants[parseInt(i)] || null;
+      }
+
+      /* ── THEME ── */
+      function toggleTheme() {
+        isDark = !isDark;
+        applyTheme();
+        save();
+        const btn = document.getElementById("themeFlipBtn");
+        if (btn) {
+          btn.classList.remove("spinning");
+          void btn.offsetWidth;
+          btn.classList.add("spinning");
+          setTimeout(() => btn.classList.remove("spinning"), 520);
+        }
+      }
+      function applyTheme() {
+        document.body.setAttribute("data-theme", isDark ? "dark" : "");
+        document.getElementById("themeIcon").textContent = isDark ? "🌙" : "☀️";
+        document.getElementById("themeMain").textContent = isDark
+          ? "Mode Gelap"
+          : "Mode Terang";
+        document.getElementById("themeSub").textContent = isDark
+          ? "Ketuk untuk beralih ke mode terang"
+          : "Ketuk untuk beralih ke mode gelap";
+      }
+
+      /* ── SETTINGS ── */
+      function openSettings(btn) {
+        document.getElementById("sheetOverlay").classList.add("open");
+        document.getElementById("bottomSheet").classList.add("open");
+        if (btn) {
+          btn.style.transform = "rotate(90deg) scale(1.1)";
+          setTimeout(() => {
+            btn.style.transform = "";
+          }, 480);
+        }
+      }
+      function closeSettings() {
+        document.getElementById("sheetOverlay").classList.remove("open");
+        document.getElementById("bottomSheet").classList.remove("open");
+      }
+
+      /* ── FEEDBACK ── */
+      function sendFeedback(ch) {
+        const txt = document.getElementById("feedbackText").value.trim();
+        if (!txt) {
+          showToast("⚠️ Tulis pesan dahulu");
+          return;
+        }
+        const enc = encodeURIComponent(txt);
+        if (ch === "email")
+          window.open(
+            `mailto:samuelsiallagan49@gmail.com?subject=Feedback%20Cover%20Generator&body=${enc}`,
+          );
+        else window.open(`https://wa.me/6288807654204?text=${enc}`);
+        showToast("✔ Membuka aplikasi…");
+      }
+
+      /* ── RESET ── */
+      function resetForm() {
+        if (!confirm("Reset semua data?")) return;
+        localStorage.removeItem("cg7");
+        assistants = [];
+        const now = new Date();
+        ["nomorModul", "logoW", "logoH"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = id === "nomorModul" ? "1" : "4";
+        });
+        document.getElementById("sigMonth").value = MONTHS[now.getMonth()];
+        document.getElementById("sigDay").value = now.getDate();
+        document.getElementById("mTop").value = "2";
+        document.getElementById("mBottom").value = "2";
+        document.getElementById("mLeft").value = "3";
+        document.getElementById("mRight").value = "2";
+        [
+          "judulModul",
+          "mataKuliah",
+          "namaM",
+          "nimM",
+          "kelompokM",
+          "tglPraktikum",
+          "lokasiPraktikum",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+        setKelas("RA", 0);
+        addAssistant();
+        updateMargins();
+        updatePreview();
+        showToast("✔ Form direset");
+      }
+
+      function fmtDate(str) {
+        if (!str) return "...";
+        const d = new Date(str + "T00:00:00");
+        return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+      }
+
+      /* ── VALIDATE ── */
+      function validate() {
+        const req = [
+          { id: "judulModul", label: "Judul Modul" },
+          { id: "mataKuliah", label: "Mata Kuliah" },
+          { id: "namaM", label: "Nama" },
+          { id: "nimM", label: "NIM" },
+          { id: "tglPraktikum", label: "Tanggal Praktikum" },
+          { id: "lokasiPraktikum", label: "Tempat Praktikum" },
+        ];
+        const miss = req.filter((r) => !g(r.id)).map((r) => r.label);
+        const msg = document.getElementById("alertMsg");
+        if (miss.length) {
+          msg.innerHTML = "⚠️ Wajib diisi: " + miss.join(", ");
+          msg.classList.add("show");
+          showToast("⚠️ " + miss.join(", "));
+          return false;
+        }
+        msg.classList.remove("show");
+        return true;
+      }
+
+      /* ── RENDER PAGE 1 ── */
+      function renderPage1() {
+        const nom = `MODUL ${g("nomorModul") || 1}`;
+        const jdl = g("judulModul") || "JUDUL MODUL";
+        const mkl = `Laporan Praktikum ${g("mataKuliah") || "Mata Kuliah"}`;
+        const nama = g("namaM") || "...",
+          nim = g("nimM") || "...",
+          kls = g("kelasM") || "RA",
+          klp = g("kelompokM");
+        const wPx = cmPx(g("logoW") || 4),
+          hPx = cmPx(g("logoH") || 4);
+        const logoEl = `<div style="width:${wPx}px;height:${hPx}px;display:flex;align-items:center;justify-content:center;font-size:${Math.min(wPx, hPx) * 0.52}px;line-height:1">🏛️</div>`;
+        const asistenNames =
+          assistants
+            .filter((a) => a.nama)
+            .map((a) => esc(a.nama))
+            .join("<br>") || "...";
+        const html = `
+    <div style="width:100%;text-align:center">
+      <div class="cv-modul">${nom}</div>
+      <div style="height:4px"></div>
+      <div class="cv-title">${esc(jdl)}</div>
+      <div style="height:4px"></div>
+      <div class="cv-course">${esc(mkl)}</div>
+    </div>
+    <div style="flex:1;min-height:24px"></div>
+    <div style="width:100%;text-align:center">
+      <div class="cv-oleh">Oleh:</div>
+      <div style="height:8px"></div>
+      <table class="cv-student-table" style="margin:0 auto">
+        <tr><td>NAMA</td><td>&nbsp;:&nbsp;</td><td>${esc(nama)}</td></tr>
+        <tr><td>NIM</td><td>&nbsp;:&nbsp;</td><td>${esc(nim)}</td></tr>
+        <tr><td>KELAS</td><td>&nbsp;:&nbsp;</td><td>${esc(kls)}</td></tr>
+        ${klp ? `<tr><td>KELOMPOK</td><td>&nbsp;:&nbsp;</td><td>${esc(klp)}</td></tr>` : ""}
+        <tr><td style="vertical-align:top">ASISTEN</td><td style="vertical-align:top">&nbsp;:&nbsp;</td><td>${asistenNames}</td></tr>
+      </table>
+      <div style="height:22px"></div>
+      <div class="cv-logo-wrap">${logoEl}</div>
+    </div>
+    <div style="flex:1;min-height:24px"></div>
+    <div class="cv-footer-block">
+      <div class="cv-footer-text">${LAB}</div>
+      <div class="cv-footer-text">${FAK}</div>
+      <div class="cv-footer-text">${UNIV}</div>
+      <div class="cv-footer-text">${YEAR}</div>
+    </div>`;
+        ["mPage1Inner", "dPage1Inner"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = html;
+        });
+      }
+
+      /* ── RENDER PAGE 2 ── */
+      function renderPage2() {
+        const a = getAsisten();
+        const jdl = g("judulModul") || "...",
+          tgl = fmtDate(g("tglPraktikum"));
+        const lok = g("lokasiPraktikum") || "...",
+          nama = g("namaM") || "...";
+        const nim = g("nimM") || "...",
+          kls = g("kelasM") || "...";
+        const sd = g("sigDay") || "...",
+          sm = g("sigMonth") || "...";
+
+        // Tight columns: label | colon (narrow) | value
+        const rs =
+          'font-family:"Times New Roman",serif;font-size:12pt;padding:4px 0;vertical-align:top';
+        const rows = [
+          ["Judul Modul", jdl],
+          ["Tanggal Praktikum", tgl],
+          ["Tempat Praktikum", lok],
+          ["Nama", nama],
+          ["NIM", nim],
+          ["Kelas", kls],
+          ["Asisten Praktikum", a?.nama || "..."],
+        ];
+        const tableHtml = rows
+          .map(
+            (r, i) => `
+    <tr>
+      <td style="${rs};white-space:nowrap;width:1%;padding-right:0">${r[0]}</td>
+      <td style="${rs};width:1%;padding:4px 5px;white-space:nowrap">&nbsp;:&nbsp;</td>
+      <td style="${rs}">${esc(r[1])}</td>
+    </tr>
+    ${i < rows.length - 1 ? `<tr><td colspan="3" style="height:10pt;padding:0"></td></tr>` : ""}`,
+          )
+          .join("");
+
+        const html = `
+    <table style="border-collapse:collapse;width:auto;min-width:60%">${tableHtml}</table>
+    <div style="height:40pt;flex-shrink:0"></div>
+    <div style="width:100%;display:flex;justify-content:flex-end">
+      <div class="p2-sign-block">
+        <div style="font-family:'Times New Roman',serif;font-size:12pt">Lampung Selatan, ${sd} ${esc(sm)} ${YEAR}</div>
+        <div style="font-family:'Times New Roman',serif;font-size:12pt;font-weight:bold">Mengetahui,</div>
+        <div class="p2-sign-space"></div>
+        <div style="font-family:'Times New Roman',serif;font-size:12pt;font-weight:bold">${esc(a?.nama || "...")}</div>
+        <div style="font-family:'Times New Roman',serif;font-size:12pt">${esc(a?.nim || "...")}</div>
+      </div>
+    </div>`;
+        ["mPage2Inner", "dPage2Inner"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = html;
+        });
+      }
+
+      function updatePreview() {
+        renderPage1();
+        renderPage2();
+        setTimeout(scaleAll, 10);
+        save();
+      }
+
+      /* ── PDF ── */
+      async function exportPDF() {
+        if (!validate()) return;
+        showToast("⏳ Membuat PDF…");
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          unit: "mm",
+          format: "a4",
+          orientation: "portrait",
+        });
+        // Use desktop pages if visible, else mobile
+        const isDesk = window.innerWidth >= 768;
+        const p1 = document.getElementById(isDesk ? "dPage1" : "mPage1");
+        const p2 = document.getElementById(isDesk ? "dPage2" : "mPage2");
+        for (let i = 0; i < 2; i++) {
+          const pg = i === 0 ? p1 : p2;
+          const wasHidden = !pg.classList.contains("active");
+          if (wasHidden) {
+            pg.style.display = "block";
+          }
+          const cv = await html2canvas(pg, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: "#fff",
+            width: 794,
+            height: 1123,
+          });
+          if (i > 0) pdf.addPage();
+          pdf.addImage(
+            cv.toDataURL("image/jpeg", 0.95),
+            "JPEG",
+            0,
+            0,
+            210,
+            297,
+          );
+          if (wasHidden) {
+            pg.style.display = "";
+          }
+        }
+        pdf.save(
+          `Cover_MODUL${g("nomorModul") || 1}_${g("nimM") || "NIM"}.pdf`,
+        );
+        showToast("✔ PDF berhasil diunduh!");
+      }
+
+      /* ── DOCX ── */
+      async function exportDOCX() {
+        if (!validate()) return;
+        showToast("⏳ Membuat DOCX…");
+        const {
+          Document,
+          Packer,
+          Paragraph,
+          TextRun,
+          AlignmentType,
+          PageBreak,
+          BorderStyle,
+          WidthType,
+          Table,
+          TableRow,
+          TableCell,
+        } = docx;
+        const nom = `MODUL ${g("nomorModul") || 1}`,
+          jdl = g("judulModul"),
+          mkl = `Laporan Praktikum ${g("mataKuliah")}`;
+        const nama = g("namaM"),
+          nim = g("nimM"),
+          kls = g("kelasM"),
+          klp = g("kelompokM");
+        const tgl = fmtDate(g("tglPraktikum")),
+          lok = g("lokasiPraktikum");
+        const a = getAsisten(),
+          sd = g("sigDay"),
+          sm = g("sigMonth");
+        const tnr = (t, o = {}) =>
+          new TextRun({ text: t, font: "Times New Roman", size: 24, ...o });
+        const tnr14 = (t, o = {}) =>
+          new TextRun({
+            text: t,
+            font: "Times New Roman",
+            size: 28,
+            bold: true,
+            ...o,
+          });
+        const cP = (ch, o = {}) =>
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { before: 40, after: 40 },
+            children: ch,
+            ...o,
+          });
+        const lP = (ch, o = {}) =>
+          new Paragraph({
+            spacing: { before: 40, after: 40 },
+            children: ch,
+            ...o,
+          });
+        const rP = (ch, o = {}) =>
+          new Paragraph({
+            alignment: AlignmentType.RIGHT,
+            spacing: { before: 40, after: 40 },
+            children: ch,
+            ...o,
+          });
+        const mt = () =>
+          new Paragraph({
+            children: [new TextRun("")],
+            spacing: { before: 40, after: 40 },
+          });
+        const bN = { style: BorderStyle.NIL };
+        // Tight table: label col auto, colon col narrow, value col fills
+        const mkRow = (lbl, val) =>
+          new TableRow({
+            children: [
+              new TableCell({
+                width: { size: 2400, type: WidthType.DXA },
+                borders: { top: bN, bottom: bN, left: bN, right: bN },
+                margins: { top: 60, bottom: 60, left: 0, right: 0 },
+                children: [new Paragraph({ children: [tnr(lbl)] })],
+              }),
+              new TableCell({
+                width: { size: 180, type: WidthType.DXA },
+                borders: { top: bN, bottom: bN, left: bN, right: bN },
+                margins: { top: 60, bottom: 60, left: 60, right: 60 },
+                children: [new Paragraph({ children: [tnr(":")] })],
+              }),
+              new TableCell({
+                width: { size: 5926, type: WidthType.DXA },
+                borders: { top: bN, bottom: bN, left: bN, right: bN },
+                margins: { top: 60, bottom: 60, left: 60, right: 0 },
+                children: [new Paragraph({ children: [tnr(val)] })],
+              }),
+            ],
+          });
+        const spacer = () =>
+          new TableRow({
+            children: [
+              new TableCell({
+                columnSpan: 3,
+                width: { size: 8506, type: WidthType.DXA },
+                borders: { top: bN, bottom: bN, left: bN, right: bN },
+                children: [mt()],
+              }),
+            ],
+          });
+
+        const p1 = [
+          cP([tnr14(nom)]),
+          cP([tnr14(jdl)]),
+          cP([tnr14(mkl)]),
+          mt(),
+          mt(),
+          mt(),
+          cP([tnr("Oleh:", { bold: true })]),
+          mt(),
+          lP([tnr("NAMA         : " + nama, { bold: true })]),
+          lP([tnr("NIM            : " + nim, { bold: true })]),
+          lP([tnr("KELAS        : " + kls, { bold: true })]),
+          ...(klp ? [lP([tnr("KELOMPOK : " + klp, { bold: true })])] : []),
+          lP([
+            tnr(
+              "ASISTEN     : " +
+                assistants
+                  .filter((x) => x.nama)
+                  .map((x) => x.nama)
+                  .join(", "),
+              { bold: true },
+            ),
+          ]),
+          mt(),
+          mt(),
+          cP([tnr("[LOGO INSTITUSI]", { size: 20, color: "999999" })]),
+          mt(),
+          mt(),
+          mt(),
+          mt(),
+          cP([tnr(LAB, { bold: true })]),
+          cP([tnr(FAK, { bold: true })]),
+          cP([tnr(UNIV, { bold: true })]),
+          cP([tnr(String(YEAR), { bold: true })]),
+          new Paragraph({ children: [new PageBreak()] }),
+        ];
+        const dRows = [
+          ["Judul Modul", jdl],
+          ["Tanggal Praktikum", tgl],
+          ["Tempat Praktikum", lok],
+          ["Nama", nama],
+          ["NIM", nim],
+          ["Kelas", kls],
+          ["Asisten Praktikum", a?.nama || "..."],
+        ];
+        const dt = new Table({
+          width: { size: 8506, type: WidthType.DXA },
+          columnWidths: [2400, 180, 5926],
+          rows: dRows.flatMap((r, i) => [
+            mkRow(r[0], r[1]),
+            ...(i < dRows.length - 1 ? [spacer()] : []),
+          ]),
+        });
+        const p2 = [
+          dt,
+          mt(),
+          mt(),
+          mt(),
+          mt(),
+          rP([tnr(`Lampung Selatan, ${sd} ${sm} ${YEAR}`)]),
+          rP([tnr("Mengetahui,", { bold: true })]),
+          mt(),
+          mt(),
+          mt(),
+          rP([tnr(a?.nama || "...", { bold: true })]),
+          rP([tnr(a?.nim || "...")]),
+        ];
+        const doc = new Document({
+          sections: [
+            {
+              properties: {
+                page: {
+                  size: { width: 11906, height: 16838 },
+                  margin: { top: 1134, right: 1134, bottom: 1134, left: 1701 },
+                },
+              },
+              children: [...p1, ...p2],
+            },
+          ],
+        });
+        const blob = await Packer.toBlob(doc);
+        const url = URL.createObjectURL(blob);
+        const el = document.createElement("a");
+        el.href = url;
+        el.download = `Cover_MODUL${g("nomorModul") || 1}_${nim || "NIM"}.docx`;
+        el.click();
+        URL.revokeObjectURL(url);
+        showToast("✔ DOCX berhasil diunduh!");
+      }
+    </script>
+  </body>
+</html>
