@@ -1,2554 +1,731 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover"
-    />
-    <title>Cover Generator</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
-    <style>
-      /* ── Reset ── */
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        -webkit-tap-highlight-color: transparent;
-      }
-      :root {
-        --bg: #eef2ff;
-        --sf: rgba(255, 255, 255, 0.68);
-        --sf2: rgba(255, 255, 255, 0.92);
-        --gl: rgba(255, 255, 255, 0.52);
-        --gl2: rgba(255, 255, 255, 0.8);
-        --bd: rgba(255, 255, 255, 0.9);
-        --sp: rgba(60, 60, 67, 0.13);
-        --f2: rgba(120, 120, 128, 0.12);
-        --f3: rgba(118, 118, 128, 0.08);
-        --f4: rgba(116, 116, 128, 0.05);
-        --tx: #08080f;
-        --tx2: rgba(16, 16, 40, 0.62);
-        --tx3: rgba(16, 16, 40, 0.35);
-        --bl: #007aff;
-        --blg: rgba(0, 122, 255, 0.26);
-        --in: #5856d6;
-        --pu: #af52de;
-        --gr: #34c759;
-        --rd: #ff3b30;
-        --bsm: saturate(180%) blur(14px);
-        --bmd: saturate(200%) blur(28px);
-        --blg2: saturate(220%) blur(48px);
-        --ssm: 0 2px 12px rgba(0, 0, 0, 0.06);
-        --smd: 0 8px 32px rgba(0, 0, 0, 0.09);
-        --slg: 0 20px 60px rgba(0, 0, 0, 0.13);
-        --rsm: 12px;
-        --rmd: 16px;
-        --rlg: 22px;
-        --rxl: 28px;
-        --rf: 999px;
-        --font: "Inter", -apple-system, system-ui, sans-serif;
-        --sat: env(safe-area-inset-top, 0px);
-        --sab: env(safe-area-inset-bottom, 0px);
-      }
-      [data-theme="dark"] {
-        --bg: #080b18;
-        --sf: rgba(18, 22, 42, 0.72);
-        --sf2: rgba(18, 22, 42, 0.92);
-        --gl: rgba(28, 34, 62, 0.62);
-        --gl2: rgba(36, 42, 74, 0.82);
-        --bd: rgba(255, 255, 255, 0.1);
-        --sp: rgba(255, 255, 255, 0.09);
-        --f2: rgba(120, 120, 128, 0.28);
-        --f3: rgba(118, 118, 128, 0.2);
-        --f4: rgba(116, 116, 128, 0.13);
-        --tx: #ededff;
-        --tx2: rgba(210, 210, 255, 0.6);
-        --tx3: rgba(210, 210, 255, 0.3);
-        --bl: #0a84ff;
-        --blg: rgba(10, 132, 255, 0.36);
-        --gr: #30d158;
-        --rd: #ff453a;
-        --ssm: 0 2px 12px rgba(0, 0, 0, 0.32);
-        --smd: 0 8px 32px rgba(0, 0, 0, 0.5);
-        --slg: 0 20px 60px rgba(0, 0, 0, 0.64);
-      }
-      html,
-      body {
-        height: 100%;
-        overflow: hidden;
-      }
-      body {
-        font-family: var(--font);
-        background: var(--bg);
-        color: var(--tx);
-        -webkit-font-smoothing: antialiased;
-        transition:
-          background 0.5s,
-          color 0.3s;
-        display: flex;
-        flex-direction: column;
-      }
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cover Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
+<style>
+/* ── Reset ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#eef2ff;--sf:rgba(255,255,255,.68);--sf2:rgba(255,255,255,.92);
+  --gl:rgba(255,255,255,.52);--gl2:rgba(255,255,255,.80);
+  --bd:rgba(255,255,255,.90);--sp:rgba(60,60,67,.13);
+  --f2:rgba(120,120,128,.12);--f3:rgba(118,118,128,.08);--f4:rgba(116,116,128,.05);
+  --tx:#08080f;--tx2:rgba(16,16,40,.62);--tx3:rgba(16,16,40,.35);
+  --bl:#007aff;--blg:rgba(0,122,255,.26);--in:#5856d6;--pu:#af52de;
+  --gr:#34c759;--rd:#ff3b30;
+  --bsm:saturate(180%) blur(14px);--bmd:saturate(200%) blur(28px);--blg2:saturate(220%) blur(48px);
+  --ssm:0 2px 12px rgba(0,0,0,.06);--smd:0 8px 32px rgba(0,0,0,.09);--slg:0 20px 60px rgba(0,0,0,.13);
+  --rsm:12px;--rmd:16px;--rlg:22px;--rxl:28px;--rf:999px;
+  --font:'Inter',-apple-system,system-ui,sans-serif;
+  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
+}
+[data-theme=dark]{
+  --bg:#080b18;--sf:rgba(18,22,42,.72);--sf2:rgba(18,22,42,.92);
+  --gl:rgba(28,34,62,.62);--gl2:rgba(36,42,74,.82);
+  --bd:rgba(255,255,255,.10);--sp:rgba(255,255,255,.09);
+  --f2:rgba(120,120,128,.28);--f3:rgba(118,118,128,.20);--f4:rgba(116,116,128,.13);
+  --tx:#ededff;--tx2:rgba(210,210,255,.60);--tx3:rgba(210,210,255,.30);
+  --bl:#0a84ff;--blg:rgba(10,132,255,.36);--gr:#30d158;--rd:#ff453a;
+  --ssm:0 2px 12px rgba(0,0,0,.32);--smd:0 8px 32px rgba(0,0,0,.50);--slg:0 20px 60px rgba(0,0,0,.64);
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);-webkit-font-smoothing:antialiased;transition:background .5s,color .3s;display:flex;flex-direction:column}
 
-      /* ── Animated BG ── */
-      .bg-layer {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
-      }
-      .orb {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(80px);
-        animation: od var(--d, 12s) ease-in-out infinite alternate;
-      }
-      .o1 {
-        width: 55vw;
-        height: 55vw;
-        background: radial-gradient(
-          circle,
-          rgba(0, 122, 255, 0.2),
-          transparent 70%
-        );
-        top: -10%;
-        left: -10%;
-        --d: 14s;
-      }
-      .o2 {
-        width: 44vw;
-        height: 44vw;
-        background: radial-gradient(
-          circle,
-          rgba(175, 82, 222, 0.16),
-          transparent 70%
-        );
-        top: 6%;
-        right: -8%;
-        --d: 11s;
-      }
-      .o3 {
-        width: 60vw;
-        height: 60vw;
-        background: radial-gradient(
-          circle,
-          rgba(47, 184, 198, 0.12),
-          transparent 70%
-        );
-        bottom: -15%;
-        left: 10%;
-        --d: 17s;
-      }
-      .o4 {
-        width: 34vw;
-        height: 34vw;
-        background: radial-gradient(
-          circle,
-          rgba(52, 199, 89, 0.1),
-          transparent 70%
-        );
-        bottom: 2%;
-        right: -4%;
-        --d: 9s;
-      }
-      [data-theme="dark"] .o1 {
-        background: radial-gradient(
-          circle,
-          rgba(10, 132, 255, 0.3),
-          transparent 70%
-        );
-      }
-      [data-theme="dark"] .o2 {
-        background: radial-gradient(
-          circle,
-          rgba(191, 90, 242, 0.26),
-          transparent 70%
-        );
-      }
-      [data-theme="dark"] .o3 {
-        background: radial-gradient(
-          circle,
-          rgba(64, 200, 224, 0.2),
-          transparent 70%
-        );
-      }
-      [data-theme="dark"] .o4 {
-        background: radial-gradient(
-          circle,
-          rgba(48, 209, 88, 0.16),
-          transparent 70%
-        );
-      }
-      @keyframes od {
-        0% {
-          transform: translate(0, 0) scale(1);
-        }
-        50% {
-          transform: translate(4%, 8%) scale(1.06);
-        }
-        100% {
-          transform: translate(-3%, 12%) scale(0.95);
-        }
-      }
+/* ── Animated BG ── */
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);animation:od var(--d,12s) ease-in-out infinite alternate}
+.o1{width:55vw;height:55vw;background:radial-gradient(circle,rgba(0,122,255,.20),transparent 70%);top:-10%;left:-10%;--d:14s}
+.o2{width:44vw;height:44vw;background:radial-gradient(circle,rgba(175,82,222,.16),transparent 70%);top:6%;right:-8%;--d:11s}
+.o3{width:60vw;height:60vw;background:radial-gradient(circle,rgba(47,184,198,.12),transparent 70%);bottom:-15%;left:10%;--d:17s}
+.o4{width:34vw;height:34vw;background:radial-gradient(circle,rgba(52,199,89,.10),transparent 70%);bottom:2%;right:-4%;--d:9s}
+[data-theme=dark] .o1{background:radial-gradient(circle,rgba(10,132,255,.30),transparent 70%)}
+[data-theme=dark] .o2{background:radial-gradient(circle,rgba(191,90,242,.26),transparent 70%)}
+[data-theme=dark] .o3{background:radial-gradient(circle,rgba(64,200,224,.20),transparent 70%)}
+[data-theme=dark] .o4{background:radial-gradient(circle,rgba(48,209,88,.16),transparent 70%)}
+@keyframes od{0%{transform:translate(0,0) scale(1)}50%{transform:translate(4%,8%) scale(1.06)}100%{transform:translate(-3%,12%) scale(.95)}}
 
-      /* ── App Shell ── */
-      #app {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        flex-direction: column;
-        height: 100dvh;
-        overflow: hidden;
-      }
+/* ── App Shell ── */
+#app{position:relative;z-index:1;display:flex;flex-direction:column;height:100dvh;overflow:hidden}
 
-      /* ── Navbar ── */
-      .nav {
-        flex-shrink: 0;
-        padding: calc(var(--sat) + 11px) 18px 11px;
-        background: var(--gl);
-        backdrop-filter: var(--bmd);
-        -webkit-backdrop-filter: var(--bmd);
-        border-bottom: 0.5px solid var(--bd);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        z-index: 100;
-      }
-      .nav-title {
-        font-size: 0.95rem;
-        font-weight: 700;
-        flex: 1;
-        text-align: center;
-        background: linear-gradient(135deg, var(--bl), var(--pu));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        letter-spacing: -0.3px;
-      }
-      .ico-btn {
-        width: 34px;
-        height: 34px;
-        background: var(--f2);
-        border: none;
-        border-radius: var(--rf);
-        font-size: 16px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--tx);
-        transition: all 0.18s;
-        flex-shrink: 0;
-      }
-      .ico-btn:active {
-        transform: scale(0.87);
-        opacity: 0.65;
-      }
-      .pill-btn {
-        background: var(--f2);
-        border: 0.5px solid var(--bd);
-        border-radius: var(--rf);
-        padding: 7px 14px;
-        font-family: var(--font);
-        font-size: 0.78rem;
-        font-weight: 600;
-        color: var(--rd);
-        cursor: pointer;
-        transition: all 0.18s;
-        white-space: nowrap;
-      }
-      .pill-btn:active {
-        transform: scale(0.92);
-        opacity: 0.7;
-      }
+/* ── Navbar ── */
+.nav{flex-shrink:0;padding:calc(var(--sat) + 11px) 18px 11px;background:var(--gl);backdrop-filter:var(--bmd);-webkit-backdrop-filter:var(--bmd);border-bottom:.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:100}
+.nav-title{font-size:.95rem;font-weight:700;flex:1;text-align:center;background:linear-gradient(135deg,var(--bl),var(--pu));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.3px}
+.ico-btn{width:34px;height:34px;background:var(--f2);border:none;border-radius:var(--rf);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--tx);transition:all .18s;flex-shrink:0}
+.ico-btn:active{transform:scale(.87);opacity:.65}
+.pill-btn{background:var(--f2);border:.5px solid var(--bd);border-radius:var(--rf);padding:7px 14px;font-family:var(--font);font-size:.78rem;font-weight:600;color:var(--rd);cursor:pointer;transition:all .18s;white-space:nowrap}
+.pill-btn:active{transform:scale(.92);opacity:.7}
 
-      /* ── Body: desktop 2-col / mobile single ── */
-      .body-wrap {
-        flex: 1;
-        display: flex;
-        overflow: hidden;
-        min-height: 0;
-      }
+/* ── Body: desktop 2-col / mobile single ── */
+.body-wrap{flex:1;display:flex;overflow:hidden;min-height:0}
 
-      /* Left pane */
-      .left-pane {
-        flex-shrink: 0;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-      @media (min-width: 768px) {
-        .left-pane {
-          width: 400px;
-          border-right: 0.5px solid var(--sp);
-        }
-      }
-      @media (max-width: 767px) {
-        .left-pane {
-          width: 100%;
-          flex: 1;
-        }
-      }
+/* Left pane */
+.left-pane{
+  flex-shrink:0;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+@media(min-width:768px){
+  .left-pane{width:380px;border-right:.5px solid var(--sp)}
+}
+@media(max-width:767px){
+  .left-pane{width:100%;flex:1}
+}
 
-      /* Right pane (desktop only) */
-      .right-pane {
-        flex: 1;
-        overflow-y: auto;
-        background: rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 14px;
-        min-width: 0;
-      }
-      @media (max-width: 767px) {
-        .right-pane {
-          display: none;
-        }
-      }
+/* Right pane (desktop only) — scrollable preview column */
+.right-pane{flex:1;overflow-y:auto;background:rgba(0,0,0,.12);padding:18px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;min-width:0}
+@media(max-width:767px){.right-pane{display:none}}
 
-      /* Scrollable form area */
-      .form-scroll {
-        flex: 1;
-        overflow-y: auto;
-        padding: 12px 14px calc(80px + var(--sab));
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
-      }
-      .form-scroll::-webkit-scrollbar {
-        display: none;
-      }
+/* Scrollable form area */
+.form-scroll{flex:1;overflow-y:auto;padding:12px 14px 8px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.form-scroll::-webkit-scrollbar{display:none}
 
-      /* ── Floating tab bar (mobile only) ── */
-      .tab-bar {
-        flex-shrink: 0;
-        margin: 0 12px calc(var(--sab) + 10px);
-        padding: 9px 10px;
-        background: var(--gl2);
-        backdrop-filter: var(--blg2);
-        -webkit-backdrop-filter: var(--blg2);
-        border: 0.5px solid var(--bd);
-        border-radius: var(--rxl);
-        display: flex;
-        gap: 7px;
-        box-shadow:
-          var(--slg),
-          inset 0 1px 0 rgba(255, 255, 255, 0.5);
-        transition:
-          transform 0.38s cubic-bezier(0.32, 0.72, 0, 1),
-          opacity 0.28s;
-      }
-      [data-theme="dark"] .tab-bar {
-        box-shadow:
-          var(--slg),
-          inset 0 1px 0 rgba(255, 255, 255, 0.06);
-      }
-      .tab-bar.hide {
-        transform: translateY(120%);
-        opacity: 0;
-      }
-      @media (min-width: 768px) {
-        .tab-bar {
-          border-radius: 0;
-          margin: 0;
-          border-top: 0.5px solid var(--bd);
-          padding: 10px 12px calc(var(--sab) + 10px);
-        }
-        .tab-bar .t-ghost {
-          display: none;
-        }
-      }
-      .t-btn {
-        flex: 1;
-        padding: 12px 8px;
-        border: none;
-        border-radius: calc(var(--rxl) - 6px);
-        font-family: var(--font);
-        font-size: 0.84rem;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        letter-spacing: -0.1px;
-        transition: all 0.26s cubic-bezier(0.34, 1.56, 0.64, 1);
-        position: relative;
-        overflow: hidden;
-      }
-      .t-btn::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        background: rgba(255, 255, 255, 0.2);
-        opacity: 0;
-        transition: opacity 0.18s;
-      }
-      .t-btn:active::after {
-        opacity: 1;
-      }
-      .t-btn:active {
-        transform: scale(0.94);
-      }
-      .t-primary {
-        background: linear-gradient(135deg, var(--bl), #4facfe);
-        color: #fff;
-        box-shadow:
-          0 4px 18px var(--blg),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      }
-      .t-accent {
-        background: linear-gradient(135deg, var(--in), var(--pu));
-        color: #fff;
-        box-shadow:
-          0 4px 18px rgba(88, 86, 214, 0.35),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      }
-      .t-ghost {
-        background: var(--f2);
-        color: var(--bl);
-        border: 0.5px solid var(--bd);
-      }
+/* ── Tab bar — ALWAYS FIXED at bottom, never hides ── */
+.tab-bar{
+  flex-shrink:0;
+  padding:9px 10px calc(var(--sab) + 9px);
+  background:var(--gl2);
+  backdrop-filter:var(--blg2);-webkit-backdrop-filter:var(--blg2);
+  border-top:.5px solid var(--bd);
+  display:flex;gap:7px;
+  box-shadow:0 -4px 20px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.4);
+}
+[data-theme=dark] .tab-bar{box-shadow:0 -4px 20px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.06)}
+/* Mobile: rounded floating pill */
+@media(max-width:767px){
+  .tab-bar{
+    margin:0 10px calc(var(--sab) + 8px);
+    border-radius:var(--rxl);
+    border:.5px solid var(--bd);
+    box-shadow:var(--slg),inset 0 1px 0 rgba(255,255,255,.5);
+    border-top:none;
+    padding:9px 10px;
+  }
+  [data-theme=dark] .tab-bar{box-shadow:var(--slg),inset 0 1px 0 rgba(255,255,255,.06)}
+}
+@media(min-width:768px){
+  .tab-bar .t-ghost{display:none}
+}
+.t-btn{flex:1;padding:12px 8px;border:none;border-radius:calc(var(--rxl) - 6px);font-family:var(--font);font-size:.84rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;letter-spacing:-.1px;transition:all .26s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.t-btn::after{content:'';position:absolute;inset:0;border-radius:inherit;background:rgba(255,255,255,.2);opacity:0;transition:opacity .18s}
+.t-btn:active::after{opacity:1}.t-btn:active{transform:scale(.94)}
+.t-primary{background:linear-gradient(135deg,var(--bl),#4facfe);color:#fff;box-shadow:0 4px 18px var(--blg),inset 0 1px 0 rgba(255,255,255,.3)}
+.t-accent{background:linear-gradient(135deg,var(--in),var(--pu));color:#fff;box-shadow:0 4px 18px rgba(88,86,214,.35),inset 0 1px 0 rgba(255,255,255,.2)}
+.t-ghost{background:var(--f2);color:var(--bl);border:.5px solid var(--bd)}
 
-      /* ── Segmented tabs (Isi Data / Preview) ── */
-      .seg {
-        position: relative;
-        display: flex;
-        background: var(--f2);
-        border: 0.5px solid var(--bd);
-        border-radius: var(--rmd);
-        padding: 3px;
-        margin-bottom: 12px;
-        overflow: hidden;
-      }
-      .seg-pill {
-        position: absolute;
-        top: 3px;
-        bottom: 3px;
-        background: var(--sf2);
-        border: 0.5px solid var(--bd);
-        border-radius: calc(var(--rmd) - 3px);
-        box-shadow:
-          var(--ssm),
-          inset 0 1px 0 rgba(255, 255, 255, 0.6);
-        pointer-events: none;
-        z-index: 0;
-        transition:
-          left 0.36s cubic-bezier(0.34, 1.56, 0.64, 1),
-          width 0.36s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-      .seg-btn {
-        flex: 1;
-        padding: 10px 8px;
-        border: none;
-        border-radius: calc(var(--rmd) - 3px);
-        font-family: var(--font);
-        font-size: 0.88rem;
-        font-weight: 500;
-        cursor: pointer;
-        background: transparent;
-        color: var(--tx2);
-        transition:
-          color 0.26s,
-          font-weight 0.22s;
-        position: relative;
-        z-index: 1;
-      }
-      .seg-btn.active {
-        color: var(--tx);
-        font-weight: 700;
-      }
+/* ── Segmented tabs (Isi Data / Preview) ── */
+.seg{position:relative;display:flex;background:var(--f2);border:.5px solid var(--bd);border-radius:var(--rmd);padding:3px;margin-bottom:12px;overflow:hidden}
+.seg-pill{position:absolute;top:3px;bottom:3px;background:var(--sf2);border:.5px solid var(--bd);border-radius:calc(var(--rmd) - 3px);box-shadow:var(--ssm),inset 0 1px 0 rgba(255,255,255,.6);pointer-events:none;z-index:0;transition:left .36s cubic-bezier(.34,1.56,.64,1),width .36s cubic-bezier(.34,1.56,.64,1)}
+.seg-btn{flex:1;padding:10px 8px;border:none;border-radius:calc(var(--rmd) - 3px);font-family:var(--font);font-size:.88rem;font-weight:500;cursor:pointer;background:transparent;color:var(--tx2);transition:color .26s,font-weight .22s;position:relative;z-index:1}
+.seg-btn.active{color:var(--tx);font-weight:700}
 
-      /* ── Tab panels ── */
-      .panel {
-        display: none;
-      }
-      .panel.active {
-        display: block;
-      }
-      @keyframes sfr {
-        from {
-          opacity: 0;
-          transform: translateX(24px);
-        }
-        to {
-          opacity: 1;
-          transform: none;
-        }
-      }
-      @keyframes sfl {
-        from {
-          opacity: 0;
-          transform: translateX(-24px);
-        }
-        to {
-          opacity: 1;
-          transform: none;
-        }
-      }
+/* ── Tab panels ── */
+.panel{display:none}
+.panel.active{display:block}
+@keyframes sfr{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes sfl{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
 
-      /* ── Section label ── */
-      .slbl {
-        font-size: 0.68rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--tx2);
-        padding: 0 4px;
-        margin: 14px 0 8px;
-      }
-      .slbl:first-child {
-        margin-top: 4px;
-      }
+/* ── Section label ── */
+.slbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx2);padding:0 4px;margin:14px 0 8px}
+.slbl:first-child{margin-top:4px}
 
-      /* ── Glass card ── */
-      .card {
-        background: var(--sf);
-        backdrop-filter: var(--bmd);
-        -webkit-backdrop-filter: var(--bmd);
-        border-radius: var(--rlg);
-        border: 0.5px solid var(--bd);
-        box-shadow:
-          var(--smd),
-          inset 0 1px 0 rgba(255, 255, 255, 0.5);
-        margin-bottom: 12px;
-        overflow: hidden;
-        animation: cin 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-      }
-      [data-theme="dark"] .card {
-        box-shadow:
-          var(--smd),
-          inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      }
-      @keyframes cin {
-        from {
-          opacity: 0;
-          transform: translateY(16px) scale(0.97);
-        }
-        to {
-          opacity: 1;
-          transform: none;
-        }
-      }
-      .card:nth-child(2) {
-        animation-delay: 0.04s;
-      }
-      .card:nth-child(3) {
-        animation-delay: 0.08s;
-      }
-      .card:nth-child(4) {
-        animation-delay: 0.12s;
-      }
-      .card:nth-child(5) {
-        animation-delay: 0.16s;
-      }
-      .card-body {
-        padding: 14px 15px 15px;
-      }
+/* ── Glass card ── */
+.card{background:var(--sf);backdrop-filter:var(--bmd);-webkit-backdrop-filter:var(--bmd);border-radius:var(--rlg);border:.5px solid var(--bd);box-shadow:var(--smd),inset 0 1px 0 rgba(255,255,255,.5);margin-bottom:12px;overflow:hidden;animation:cin .38s cubic-bezier(.34,1.56,.64,1) both}
+[data-theme=dark] .card{box-shadow:var(--smd),inset 0 1px 0 rgba(255,255,255,.05)}
+@keyframes cin{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.card:nth-child(2){animation-delay:.04s}.card:nth-child(3){animation-delay:.08s}
+.card:nth-child(4){animation-delay:.12s}.card:nth-child(5){animation-delay:.16s}
+.card-body{padding:14px 15px 15px}
 
-      /* ── Form elements ── */
-      .fr {
-        margin-bottom: 12px;
-      }
-      .fr:last-child {
-        margin-bottom: 0;
-      }
-      .fl {
-        font-size: 0.69rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: var(--tx2);
-        margin-bottom: 6px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .badge {
-        font-size: 0.6rem;
-        font-weight: 600;
-        padding: 2px 6px;
-        border-radius: var(--rf);
-        background: var(--f2);
-        color: var(--tx3);
-        text-transform: none;
-        letter-spacing: 0;
-        border: 0.5px solid var(--sp);
-      }
-      .req {
-        color: var(--rd);
-        font-size: 0.64rem;
-      }
-      .inp {
-        width: 100%;
-        background: var(--f3);
-        border: 1px solid transparent;
-        border-radius: var(--rsm);
-        color: var(--tx);
-        padding: 11px 13px;
-        font-family: var(--font);
-        font-size: 0.96rem;
-        outline: none;
-        transition: all 0.2s;
-        -webkit-appearance: none;
-        appearance: none;
-      }
-      .inp::placeholder {
-        color: var(--tx3);
-      }
-      .inp:focus {
-        background: var(--f2);
-        border-color: var(--bl);
-        box-shadow: 0 0 0 3px var(--blg);
-      }
-      .inp[type="number"]::-webkit-inner-spin-button,
-      .inp[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-      }
-      .pfx {
-        display: flex;
-        align-items: center;
-        background: var(--f3);
-        border: 1px solid transparent;
-        border-radius: var(--rsm);
-        overflow: hidden;
-        transition: all 0.2s;
-      }
-      .pfx:focus-within {
-        border-color: var(--bl);
-        box-shadow: 0 0 0 3px var(--blg);
-        background: var(--f2);
-      }
-      .pfx-txt {
-        padding: 11px 0 11px 13px;
-        font-size: 0.96rem;
-        font-weight: 500;
-        color: var(--tx2);
-        white-space: nowrap;
-        flex-shrink: 0;
-      }
-      .pfx .inp {
-        background: transparent;
-        border: none;
-        box-shadow: none;
-        padding-left: 5px;
-        border-radius: 0;
-      }
-      .pfx .inp:focus {
-        background: transparent;
-        border-color: transparent;
-        box-shadow: none;
-      }
-      .mod-wrap {
-        display: flex;
-        align-items: center;
-        background: var(--f3);
-        border: 1px solid transparent;
-        border-radius: var(--rsm);
-        overflow: hidden;
-        transition: all 0.2s;
-      }
-      .mod-wrap:focus-within {
-        border-color: var(--bl);
-        box-shadow: 0 0 0 3px var(--blg);
-      }
-      .mod-pfx {
-        padding: 11px 8px 11px 13px;
-        font-size: 0.96rem;
-        font-weight: 700;
-        color: var(--bl);
-        white-space: nowrap;
-        flex-shrink: 0;
-        background: rgba(0, 122, 255, 0.08);
-        border-right: 0.5px solid var(--sp);
-      }
-      .mod-wrap .inp {
-        background: transparent;
-        border: none;
-        box-shadow: none;
-        font-weight: 700;
-        color: var(--bl);
-        text-align: center;
-        padding-left: 10px;
-        border-radius: 0;
-        font-size: 1.08rem;
-        max-width: 80px;
-      }
-      .mod-wrap .inp:focus {
-        background: transparent;
-        border-color: transparent;
-        box-shadow: none;
-      }
-      .dim-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-      }
-      .dim-lbl {
-        font-size: 0.67rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        color: var(--tx3);
-        margin-bottom: 4px;
-        display: flex;
-        align-items: center;
-        gap: 3px;
-      }
-      .dim-wrap {
-        display: flex;
-        align-items: center;
-        background: var(--f3);
-        border: 1px solid transparent;
-        border-radius: var(--rsm);
-        overflow: hidden;
-        transition: all 0.2s;
-      }
-      .dim-wrap:focus-within {
-        border-color: var(--bl);
-        box-shadow: 0 0 0 3px var(--blg);
-      }
-      .dim-wrap .inp {
-        background: transparent;
-        border: none;
-        box-shadow: none;
-        text-align: center;
-        font-weight: 700;
-        color: var(--bl);
-        font-size: 1.02rem;
-        border-radius: 0;
-        padding-right: 3px;
-      }
-      .dim-wrap .inp:focus {
-        background: transparent;
-        border-color: transparent;
-        box-shadow: none;
-      }
-      .dim-unit {
-        padding: 0 10px 0 2px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: var(--tx3);
-        flex-shrink: 0;
-      }
-      /* Kelas segmented */
-      .kctr {
-        position: relative;
-        display: flex;
-        background: var(--f3);
-        border-radius: var(--rsm);
-        padding: 3px;
-        overflow: hidden;
-      }
-      .kpill {
-        position: absolute;
-        top: 3px;
-        bottom: 3px;
-        background: var(--sf2);
-        border: 0.5px solid var(--bd);
-        border-radius: calc(var(--rsm) - 2px);
-        box-shadow:
-          var(--ssm),
-          inset 0 1px 0 rgba(255, 255, 255, 0.55);
-        pointer-events: none;
-        z-index: 0;
-        transition:
-          left 0.36s cubic-bezier(0.34, 1.56, 0.64, 1),
-          width 0.36s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-      .kbtn {
-        flex: 1;
-        padding: 10px 6px;
-        border: none;
-        border-radius: calc(var(--rsm) - 2px);
-        font-family: var(--font);
-        font-size: 0.88rem;
-        font-weight: 500;
-        color: var(--tx2);
-        background: transparent;
-        cursor: pointer;
-        transition:
-          color 0.26s,
-          font-weight 0.24s;
-        position: relative;
-        z-index: 1;
-      }
-      .kbtn.active {
-        color: var(--bl);
-        font-weight: 700;
-      }
-      .sel {
-        width: 100%;
-        background: var(--f3);
-        border: 1px solid transparent;
-        border-radius: var(--rsm);
-        color: var(--tx);
-        padding: 11px 36px 11px 13px;
-        font-family: var(--font);
-        font-size: 0.96rem;
-        outline: none;
-        -webkit-appearance: none;
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%238E8E93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 13px center;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      .sel:focus {
-        border-color: var(--bl);
-        box-shadow: 0 0 0 3px var(--blg);
-        background-color: var(--f2);
-      }
-      .sel option {
-        background: var(--bg);
-        color: var(--tx);
-      }
-      .g2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 9px;
-      }
-      /* Asisten */
-      .ait {
-        background: var(--f4);
-        border-radius: var(--rsm);
-        border: 0.5px solid var(--sp);
-        padding: 11px;
-        margin-bottom: 8px;
-        position: relative;
-        animation: cin 0.28s ease both;
-      }
-      .ait input {
-        margin-bottom: 7px;
-      }
-      .ait input:last-of-type {
-        margin-bottom: 0;
-      }
-      .arm {
-        position: absolute;
-        top: 9px;
-        right: 9px;
-        width: 22px;
-        height: 22px;
-        background: rgba(255, 59, 48, 0.12);
-        border: none;
-        border-radius: 50%;
-        font-size: 11px;
-        color: var(--rd);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.18s;
-      }
-      .arm:active {
-        transform: scale(0.84);
-      }
-      .slbl2 {
-        font-size: 0.65rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-        color: var(--tx3);
-        margin-bottom: 3px;
-      }
-      .add-a {
-        width: 100%;
-        padding: 11px;
-        background: rgba(0, 122, 255, 0.05);
-        border: 1.5px dashed rgba(0, 122, 255, 0.26);
-        border-radius: var(--rsm);
-        font-family: var(--font);
-        font-size: 0.88rem;
-        font-weight: 600;
-        color: var(--bl);
-        cursor: pointer;
-        transition: all 0.18s;
-      }
-      .add-a:active {
-        background: rgba(0, 122, 255, 0.1);
-        transform: scale(0.98);
-      }
-      .alert {
-        background: rgba(255, 59, 48, 0.08);
-        border: 1px solid rgba(255, 59, 48, 0.2);
-        border-radius: var(--rmd);
-        padding: 11px 15px;
-        font-size: 0.82rem;
-        font-weight: 500;
-        color: var(--rd);
-        margin-bottom: 12px;
-        display: none;
-        animation: shk 0.38s ease;
-      }
-      .alert.on {
-        display: block;
-      }
-      @keyframes shk {
-        0%,
-        100% {
-          transform: translateX(0);
-        }
-        20%,
-        60% {
-          transform: translateX(-5px);
-        }
-        40%,
-        80% {
-          transform: translateX(5px);
-        }
-      }
+/* ── Form elements ── */
+.fr{margin-bottom:12px}.fr:last-child{margin-bottom:0}
+.fl{font-size:.69rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--tx2);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.badge{font-size:.6rem;font-weight:600;padding:2px 6px;border-radius:var(--rf);background:var(--f2);color:var(--tx3);text-transform:none;letter-spacing:0;border:.5px solid var(--sp)}
+.req{color:var(--rd);font-size:.64rem}
+.inp{width:100%;background:var(--f3);border:1px solid transparent;border-radius:var(--rsm);color:var(--tx);padding:11px 13px;font-family:var(--font);font-size:.96rem;outline:none;transition:all .2s;-webkit-appearance:none;appearance:none}
+.inp::placeholder{color:var(--tx3)}.inp:focus{background:var(--f2);border-color:var(--bl);box-shadow:0 0 0 3px var(--blg)}
+.inp[type=number]::-webkit-inner-spin-button,.inp[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+.pfx{display:flex;align-items:center;background:var(--f3);border:1px solid transparent;border-radius:var(--rsm);overflow:hidden;transition:all .2s}
+.pfx:focus-within{border-color:var(--bl);box-shadow:0 0 0 3px var(--blg);background:var(--f2)}
+.pfx-txt{padding:11px 0 11px 13px;font-size:.96rem;font-weight:500;color:var(--tx2);white-space:nowrap;flex-shrink:0}
+.pfx .inp{background:transparent;border:none;box-shadow:none;padding-left:5px;border-radius:0}
+.pfx .inp:focus{background:transparent;border-color:transparent;box-shadow:none}
+.mod-wrap{display:flex;align-items:center;background:var(--f3);border:1px solid transparent;border-radius:var(--rsm);overflow:hidden;transition:all .2s}
+.mod-wrap:focus-within{border-color:var(--bl);box-shadow:0 0 0 3px var(--blg)}
+.mod-pfx{padding:11px 8px 11px 13px;font-size:.96rem;font-weight:700;color:var(--bl);white-space:nowrap;flex-shrink:0;background:rgba(0,122,255,.08);border-right:.5px solid var(--sp)}
+.mod-wrap .inp{background:transparent;border:none;box-shadow:none;font-weight:700;color:var(--bl);text-align:center;padding-left:10px;border-radius:0;font-size:1.08rem;max-width:80px}
+.mod-wrap .inp:focus{background:transparent;border-color:transparent;box-shadow:none}
+.dim-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dim-lbl{font-size:.67rem;font-weight:600;text-transform:uppercase;color:var(--tx3);margin-bottom:4px;display:flex;align-items:center;gap:3px}
+.dim-wrap{display:flex;align-items:center;background:var(--f3);border:1px solid transparent;border-radius:var(--rsm);overflow:hidden;transition:all .2s}
+.dim-wrap:focus-within{border-color:var(--bl);box-shadow:0 0 0 3px var(--blg)}
+.dim-wrap .inp{background:transparent;border:none;box-shadow:none;text-align:center;font-weight:700;color:var(--bl);font-size:1.02rem;border-radius:0;padding-right:3px}
+.dim-wrap .inp:focus{background:transparent;border-color:transparent;box-shadow:none}
+.dim-unit{padding:0 10px 0 2px;font-size:.8rem;font-weight:600;color:var(--tx3);flex-shrink:0}
+/* Kelas segmented */
+.kctr{position:relative;display:flex;background:var(--f3);border-radius:var(--rsm);padding:3px;overflow:hidden}
+.kpill{position:absolute;top:3px;bottom:3px;background:var(--sf2);border:.5px solid var(--bd);border-radius:calc(var(--rsm) - 2px);box-shadow:var(--ssm),inset 0 1px 0 rgba(255,255,255,.55);pointer-events:none;z-index:0;transition:left .36s cubic-bezier(.34,1.56,.64,1),width .36s cubic-bezier(.34,1.56,.64,1)}
+.kbtn{flex:1;padding:10px 6px;border:none;border-radius:calc(var(--rsm) - 2px);font-family:var(--font);font-size:.88rem;font-weight:500;color:var(--tx2);background:transparent;cursor:pointer;transition:color .26s,font-weight .24s;position:relative;z-index:1}
+.kbtn.active{color:var(--bl);font-weight:700}
+.sel{width:100%;background:var(--f3);border:1px solid transparent;border-radius:var(--rsm);color:var(--tx);padding:11px 36px 11px 13px;font-family:var(--font);font-size:.96rem;outline:none;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%238E8E93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;cursor:pointer;transition:all .2s}
+.sel:focus{border-color:var(--bl);box-shadow:0 0 0 3px var(--blg);background-color:var(--f2)}
+.sel option{background:var(--bg);color:var(--tx)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+/* Asisten */
+.ait{background:var(--f4);border-radius:var(--rsm);border:.5px solid var(--sp);padding:11px;margin-bottom:8px;position:relative;animation:cin .28s ease both}
+.ait input{margin-bottom:7px}.ait input:last-of-type{margin-bottom:0}
+.arm{position:absolute;top:9px;right:9px;width:22px;height:22px;background:rgba(255,59,48,.12);border:none;border-radius:50%;font-size:11px;color:var(--rd);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.arm:active{transform:scale(.84)}
+.slbl2{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--tx3);margin-bottom:3px}
+.add-a{width:100%;padding:11px;background:rgba(0,122,255,.05);border:1.5px dashed rgba(0,122,255,.26);border-radius:var(--rsm);font-family:var(--font);font-size:.88rem;font-weight:600;color:var(--bl);cursor:pointer;transition:all .18s}
+.add-a:active{background:rgba(0,122,255,.10);transform:scale(.98)}
+.alert{background:rgba(255,59,48,.08);border:1px solid rgba(255,59,48,.20);border-radius:var(--rmd);padding:11px 15px;font-size:.82rem;font-weight:500;color:var(--rd);margin-bottom:12px;display:none;animation:shk .38s ease}
+.alert.on{display:block}
+@keyframes shk{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
 
-      /* ── Preview panel ── */
-      .pnav {
-        display: flex;
-        gap: 6px;
-        margin-bottom: 11px;
-        width: 100%;
-        max-width: 740px;
-      }
-      .pnav-btn {
-        flex: 1;
-        padding: 9px;
-        border: none;
-        border-radius: var(--rsm);
-        font-family: var(--font);
-        font-size: 0.81rem;
-        font-weight: 600;
-        cursor: pointer;
-        background: var(--f2);
-        color: var(--tx2);
-        border: 0.5px solid var(--bd);
-        transition: all 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-      .pnav-btn.active {
-        background: linear-gradient(135deg, var(--bl), #4facfe);
-        color: #fff;
-        border-color: transparent;
-        box-shadow: 0 4px 14px var(--blg);
-      }
-      .pvwrap {
-        background: #fff;
-        border-radius: var(--rlg);
-        overflow: hidden;
-        border: 0.5px solid var(--bd);
-        box-shadow: var(--slg);
-        width: 100%;
-        max-width: 740px;
-      }
-      .sc-outer {
-        width: 100%;
-        overflow: hidden;
-        position: relative;
-      }
-      .scaler {
-        width: 794px;
-        transform-origin: top left;
-      }
-      .pp {
-        width: 794px;
-        background: #fff;
-        display: none;
-      }
-      .pp.active {
-        display: block;
-      }
+/* ── Preview panel ── */
+.pnav{display:flex;gap:6px;margin-bottom:11px;width:100%;max-width:740px}
+.pnav-btn{flex:1;padding:9px;border:none;border-radius:var(--rsm);font-family:var(--font);font-size:.81rem;font-weight:600;cursor:pointer;background:var(--f2);color:var(--tx2);border:.5px solid var(--bd);transition:all .24s cubic-bezier(.34,1.56,.64,1)}
+.pnav-btn.active{background:linear-gradient(135deg,var(--bl),#4facfe);color:#fff;border-color:transparent;box-shadow:0 4px 14px var(--blg)}
+.pvwrap{background:#fff;border-radius:var(--rlg);overflow:hidden;border:.5px solid var(--bd);box-shadow:var(--slg);width:100%;max-width:740px}
+.sc-outer{width:100%;overflow:hidden;position:relative}
+.scaler{width:794px;transform-origin:top left}
+.pp{width:794px;background:#fff;display:none}
+.pp.active{display:block}
 
-      /* ── Settings sheet ── */
-      .sovl {
-        position: fixed;
-        inset: 0;
-        z-index: 400;
-        background: transparent;
-        display: none;
-        pointer-events: none;
-        transition: background 0.32s;
-      }
-      .sovl.on {
-        display: block;
-        pointer-events: all;
-        background: rgba(0, 0, 0, 0.25);
-        backdrop-filter: blur(2px);
-        -webkit-backdrop-filter: blur(2px);
-      }
-      .sht {
-        position: fixed;
-        bottom: 0;
-        left: 50%;
-        z-index: 401;
-        width: 100%;
-        max-width: 430px;
-        max-height: 92dvh;
-        background: var(--gl2);
-        backdrop-filter: var(--blg2);
-        -webkit-backdrop-filter: var(--blg2);
-        border-radius: 22px 22px 0 0;
-        border-top: 0.5px solid var(--bd);
-        box-shadow:
-          0 -8px 40px rgba(0, 0, 0, 0.16),
-          inset 0 1px 0 rgba(255, 255, 255, 0.32);
-        display: flex;
-        flex-direction: column;
-        padding-bottom: calc(var(--sab) + 6px);
-        overflow: hidden;
-        transform: translateX(-50%) translateY(110%) scale(0.8);
-        transition:
-          transform 0.48s cubic-bezier(0.32, 0.72, 0, 1),
-          opacity 0.3s;
-        opacity: 0;
-        pointer-events: none;
-      }
-      .sht.on {
-        transform: translateX(-50%) translateY(0) scale(1);
-        opacity: 1;
-        pointer-events: all;
-      }
-      .shdl {
-        width: 34px;
-        height: 5px;
-        background: var(--sp);
-        border-radius: 3px;
-        margin: 9px auto 5px;
-        flex-shrink: 0;
-      }
-      .shdr {
-        padding: 3px 17px 13px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 0.5px solid var(--sp);
-        flex-shrink: 0;
-      }
-      .shdr-title {
-        font-size: 0.96rem;
-        font-weight: 800;
-        color: var(--tx);
-        letter-spacing: -0.3px;
-      }
-      .shdr-close {
-        width: 27px;
-        height: 27px;
-        background: var(--f2);
-        border: none;
-        border-radius: 50%;
-        font-size: 12px;
-        color: var(--tx2);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.18s;
-      }
-      .shdr-close:active {
-        transform: scale(0.84);
-      }
-      .shs {
-        flex: 1;
-        overflow-y: auto;
-        padding: 14px 17px;
-        -webkit-overflow-scrolling: touch;
-      }
-      .shs::-webkit-scrollbar {
-        display: none;
-      }
-      .scard {
-        background: var(--f4);
-        border: 0.5px solid var(--sp);
-        border-radius: var(--rmd);
-        margin-bottom: 10px;
-        overflow: hidden;
-      }
-      .srow {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 13px 15px;
-        border-bottom: 0.5px solid var(--sp);
-      }
-      .srow:last-child {
-        border-bottom: none;
-      }
-      /* Theme */
-      .thcard {
-        background: var(--f4);
-        border: 0.5px solid var(--sp);
-        border-radius: var(--rmd);
-        padding: 15px;
-        margin-bottom: 10px;
-        cursor: pointer;
-        transition: all 0.28s;
-        position: relative;
-        overflow: hidden;
-      }
-      .thcard::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          135deg,
-          rgba(255, 200, 0, 0.07),
-          rgba(255, 150, 0, 0.04)
-        );
-        opacity: 0;
-        transition: opacity 0.4s;
-        pointer-events: none;
-      }
-      [data-theme="dark"] .thcard::before {
-        opacity: 1;
-      }
-      [data-theme="dark"] .thcard {
-        background: linear-gradient(
-          135deg,
-          rgba(18, 18, 40, 0.6),
-          rgba(28, 28, 60, 0.5)
-        );
-        border-color: rgba(255, 200, 0, 0.18);
-      }
-      .thcard:active {
-        transform: scale(0.98);
-      }
-      .thr {
-        display: flex;
-        align-items: center;
-        gap: 11px;
-      }
-      .thbox {
-        width: 48px;
-        height: 48px;
-        border-radius: 13px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        flex-shrink: 0;
-        background: linear-gradient(
-          135deg,
-          rgba(255, 220, 50, 0.18),
-          rgba(255, 170, 0, 0.09)
-        );
-        border: 1px solid rgba(255, 200, 0, 0.18);
-        transition: all 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-      [data-theme="dark"] .thbox {
-        background: linear-gradient(
-          135deg,
-          rgba(30, 50, 110, 0.4),
-          rgba(80, 80, 190, 0.2)
-        );
-        border-color: rgba(100, 150, 255, 0.28);
-      }
-      .thico {
-        display: block;
-        transition: transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-      .thcard:active .thico {
-        transform: rotate(30deg) scale(1.2);
-      }
-      .thtxt {
-        flex: 1;
-      }
-      .thm {
-        font-size: 0.93rem;
-        font-weight: 700;
-        color: var(--tx);
-      }
-      .ths {
-        font-size: 0.73rem;
-        color: var(--tx2);
-        margin-top: 2px;
-      }
-      .thflip {
-        width: 36px;
-        height: 36px;
-        background: var(--f2);
-        border: 0.5px solid var(--bd);
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--tx2);
-        flex-shrink: 0;
-      }
-      .thflip:active {
-        opacity: 0.6;
-      }
-      @keyframes spin360 {
-        0% {
-          transform: rotate(0);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-      .thflip.sp svg {
-        animation: spin360 0.48s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-      /* Logo picker */
-      .lpick {
-        display: flex;
-        gap: 9px;
-        margin-top: 3px;
-      }
-      .lopt {
-        flex: 1;
-        border: 2px solid transparent;
-        border-radius: var(--rmd);
-        padding: 11px 7px;
-        background: var(--f3);
-        cursor: pointer;
-        transition: all 0.26s cubic-bezier(0.34, 1.56, 0.64, 1);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 7px;
-        position: relative;
-      }
-      .lopt:active {
-        transform: scale(0.95);
-      }
-      .lopt.sel2 {
-        border-color: var(--bl);
-        background: rgba(0, 122, 255, 0.07);
-        box-shadow: 0 0 0 3px var(--blg);
-      }
-      .lopt img,
-      .lopt .lph {
-        width: 54px;
-        height: 54px;
-        object-fit: contain;
-        border-radius: 8px;
-      }
-      .lph {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 26px;
-        background: var(--f2);
-      }
-      .lopt-name {
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: var(--tx2);
-        text-align: center;
-        line-height: 1.3;
-      }
-      .lchk {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        width: 17px;
-        height: 17px;
-        background: var(--bl);
-        border-radius: 50%;
-        display: none;
-        align-items: center;
-        justify-content: center;
-      }
-      .lopt.sel2 .lchk {
-        display: flex;
-      }
-      .lchk svg {
-        width: 9px;
-        height: 9px;
-      }
-      /* Feedback */
-      .fbcard {
-        background: var(--f4);
-        border: 0.5px solid var(--sp);
-        border-radius: var(--rmd);
-        padding: 13px 15px;
-        margin-bottom: 10px;
-      }
-      .fbta {
-        width: 100%;
-        background: var(--f3);
-        border: 1px solid transparent;
-        border-radius: var(--rsm);
-        color: var(--tx);
-        padding: 10px 11px;
-        font-family: var(--font);
-        font-size: 0.88rem;
-        resize: none;
-        min-height: 76px;
-        outline: none;
-        transition: all 0.2s;
-      }
-      .fbta:focus {
-        border-color: var(--bl);
-        box-shadow: 0 0 0 3px var(--blg);
-        background: var(--f2);
-      }
-      .fbta::placeholder {
-        color: var(--tx3);
-      }
-      .fbbtn-row {
-        display: flex;
-        gap: 7px;
-        margin-top: 9px;
-      }
-      .fbbtn {
-        flex: 1;
-        padding: 10px 8px;
-        border: none;
-        border-radius: var(--rsm);
-        font-family: var(--font);
-        font-size: 0.82rem;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        transition: all 0.2s;
-      }
-      .fbbtn:active {
-        transform: scale(0.95);
-        opacity: 0.84;
-      }
-      .fb-em {
-        background: linear-gradient(135deg, #ea4335, #c5221f);
-        color: #fff;
-        box-shadow: 0 3px 10px rgba(234, 67, 53, 0.32);
-      }
-      .fb-wa {
-        background: linear-gradient(135deg, #25d366, #128c7e);
-        color: #fff;
-        box-shadow: 0 3px 10px rgba(37, 211, 102, 0.28);
-      }
-      /* Credits */
-      .cred {
-        margin-top: 22px;
-        padding: 12px;
-        text-align: center;
-        opacity: 0.5;
-      }
-      .cred:hover {
-        opacity: 0.76;
-      }
-      .cred-name {
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: var(--tx2);
-        margin-bottom: 5px;
-      }
-      .cred-yr {
-        font-size: 0.63rem;
-        color: var(--tx3);
-      }
-      .cred-soc {
-        display: flex;
-        justify-content: center;
-        gap: 9px;
-        margin-bottom: 5px;
-      }
-      .cred-a {
-        width: 27px;
-        height: 27px;
-        border-radius: 7px;
-        background: var(--f2);
-        border: 0.5px solid var(--sp);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        text-decoration: none;
-        transition: all 0.18s;
-      }
-      .cred-a:active {
-        transform: scale(0.86);
-      }
-      /* App footer */
-      .app-ft {
-        padding: 40px 14px 22px;
-        text-align: center;
-        color: var(--tx3);
-        font-size: 0.63rem;
-        line-height: 1.9;
-        opacity: 0.46;
-      }
-      /* Toast */
-      .toast {
-        position: fixed;
-        bottom: calc(96px + var(--sab));
-        left: 50%;
-        transform: translateX(-50%) translateY(18px);
-        background: var(--gl2);
-        backdrop-filter: var(--blg2);
-        -webkit-backdrop-filter: var(--blg2);
-        border: 0.5px solid var(--bd);
-        border-radius: var(--rf);
-        padding: 11px 20px;
-        font-size: 0.86rem;
-        font-weight: 600;
-        color: var(--tx);
-        opacity: 0;
-        z-index: 9999;
-        pointer-events: none;
-        box-shadow: var(--smd);
-        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        max-width: 84vw;
-        text-align: center;
-      }
-      .toast.on {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-      }
-      /* Desktop right pane preview nav */
-      @media (min-width: 768px) {
-        .right-pane .pnav,
-        .right-pane .pvwrap {
-          max-width: 100%;
-        }
-      }
-      .mt8 {
-        margin-top: 8px;
-      }
-      .mt10 {
-        margin-top: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="bg-layer">
-      <div class="orb o1"></div>
-      <div class="orb o2"></div>
-      <div class="orb o3"></div>
-      <div class="orb o4"></div>
-    </div>
+/* ── Settings sheet ── */
+.sovl{position:fixed;inset:0;z-index:400;background:transparent;display:none;pointer-events:none;transition:background .32s}
+.sovl.on{display:block;pointer-events:all;background:rgba(0,0,0,.25);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.sht{position:fixed;bottom:0;left:50%;z-index:401;width:100%;max-width:430px;max-height:92dvh;background:var(--gl2);backdrop-filter:var(--blg2);-webkit-backdrop-filter:var(--blg2);border-radius:22px 22px 0 0;border-top:.5px solid var(--bd);box-shadow:0 -8px 40px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.32);display:flex;flex-direction:column;padding-bottom:calc(var(--sab) + 6px);overflow:hidden;transform:translateX(-50%) translateY(110%) scale(.8);transition:transform .48s cubic-bezier(.32,.72,0,1),opacity .3s;opacity:0;pointer-events:none}
+.sht.on{transform:translateX(-50%) translateY(0) scale(1);opacity:1;pointer-events:all}
+.shdl{width:34px;height:5px;background:var(--sp);border-radius:3px;margin:9px auto 5px;flex-shrink:0}
+.shdr{padding:3px 17px 13px;display:flex;align-items:center;justify-content:space-between;border-bottom:.5px solid var(--sp);flex-shrink:0}
+.shdr-title{font-size:.96rem;font-weight:800;color:var(--tx);letter-spacing:-.3px}
+.shdr-close{width:27px;height:27px;background:var(--f2);border:none;border-radius:50%;font-size:12px;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.shdr-close:active{transform:scale(.84)}
+.shs{flex:1;overflow-y:auto;padding:14px 17px;-webkit-overflow-scrolling:touch}
+.shs::-webkit-scrollbar{display:none}
+.scard{background:var(--f4);border:.5px solid var(--sp);border-radius:var(--rmd);margin-bottom:10px;overflow:hidden}
+.srow{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:.5px solid var(--sp)}
+.srow:last-child{border-bottom:none}
+/* Theme */
+.thcard{background:var(--f4);border:.5px solid var(--sp);border-radius:var(--rmd);padding:15px;margin-bottom:10px;cursor:pointer;transition:all .28s;position:relative;overflow:hidden}
+.thcard::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,200,0,.07),rgba(255,150,0,.04));opacity:0;transition:opacity .4s;pointer-events:none}
+[data-theme=dark] .thcard::before{opacity:1}
+[data-theme=dark] .thcard{background:linear-gradient(135deg,rgba(18,18,40,.6),rgba(28,28,60,.5));border-color:rgba(255,200,0,.18)}
+.thcard:active{transform:scale(.98)}
+.thr{display:flex;align-items:center;gap:11px}
+.thbox{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;background:linear-gradient(135deg,rgba(255,220,50,.18),rgba(255,170,0,.09));border:1px solid rgba(255,200,0,.18);transition:all .42s cubic-bezier(.34,1.56,.64,1)}
+[data-theme=dark] .thbox{background:linear-gradient(135deg,rgba(30,50,110,.4),rgba(80,80,190,.2));border-color:rgba(100,150,255,.28)}
+.thico{display:block;transition:transform .48s cubic-bezier(.34,1.56,.64,1)}
+.thcard:active .thico{transform:rotate(30deg) scale(1.2)}
+.thtxt{flex:1}.thm{font-size:.93rem;font-weight:700;color:var(--tx)}.ths{font-size:.73rem;color:var(--tx2);margin-top:2px}
+.thflip{width:36px;height:36px;background:var(--f2);border:.5px solid var(--bd);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--tx2);flex-shrink:0}
+.thflip:active{opacity:.6}
+@keyframes spin360{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.thflip.sp svg{animation:spin360 .48s cubic-bezier(.34,1.56,.64,1)}
+/* Logo picker */
+.lpick{display:flex;gap:9px;margin-top:3px}
+.lopt{flex:1;border:2px solid transparent;border-radius:var(--rmd);padding:11px 7px;background:var(--f3);cursor:pointer;transition:all .26s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column;align-items:center;gap:7px;position:relative}
+.lopt:active{transform:scale(.95)}
+.lopt.sel2{border-color:var(--bl);background:rgba(0,122,255,.07);box-shadow:0 0 0 3px var(--blg)}
+.lopt img,.lopt .lph{width:54px;height:54px;object-fit:contain;border-radius:8px}
+.lph{display:flex;align-items:center;justify-content:center;font-size:26px;background:var(--f2)}
+.lopt-name{font-size:.7rem;font-weight:600;color:var(--tx2);text-align:center;line-height:1.3}
+.lchk{position:absolute;top:5px;right:5px;width:17px;height:17px;background:var(--bl);border-radius:50%;display:none;align-items:center;justify-content:center}
+.lopt.sel2 .lchk{display:flex}
+.lchk svg{width:9px;height:9px}
+/* Feedback */
+.fbcard{background:var(--f4);border:.5px solid var(--sp);border-radius:var(--rmd);padding:13px 15px;margin-bottom:10px}
+.fbta{width:100%;background:var(--f3);border:1px solid transparent;border-radius:var(--rsm);color:var(--tx);padding:10px 11px;font-family:var(--font);font-size:.88rem;resize:none;min-height:76px;outline:none;transition:all .2s}
+.fbta:focus{border-color:var(--bl);box-shadow:0 0 0 3px var(--blg);background:var(--f2)}
+.fbta::placeholder{color:var(--tx3)}
+.fbbtn-row{display:flex;gap:7px;margin-top:9px}
+.fbbtn{flex:1;padding:10px 8px;border:none;border-radius:var(--rsm);font-family:var(--font);font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .2s}
+.fbbtn:active{transform:scale(.95);opacity:.84}
+.fb-em{background:linear-gradient(135deg,#ea4335,#c5221f);color:#fff;box-shadow:0 3px 10px rgba(234,67,53,.32)}
+.fb-wa{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;box-shadow:0 3px 10px rgba(37,211,102,.28)}
+/* Credits */
+.cred{margin-top:22px;padding:12px;text-align:center;opacity:.50}
+.cred:hover{opacity:.76}
+.cred-name{font-size:.70rem;font-weight:600;color:var(--tx2);margin-bottom:5px}
+.cred-yr{font-size:.63rem;color:var(--tx3)}
+.cred-soc{display:flex;justify-content:center;gap:9px;margin-bottom:5px}
+.cred-a{width:27px;height:27px;border-radius:7px;background:var(--f2);border:.5px solid var(--sp);display:flex;align-items:center;justify-content:center;font-size:13px;text-decoration:none;transition:all .18s}
+.cred-a:active{transform:scale(.86)}
+/* App footer */
+.app-ft{padding:40px 14px 22px;text-align:center;color:var(--tx3);font-size:.63rem;line-height:1.9;opacity:.46}
+/* Toast */
+.toast{position:fixed;bottom:calc(96px + var(--sab));left:50%;transform:translateX(-50%) translateY(18px);background:var(--gl2);backdrop-filter:var(--blg2);-webkit-backdrop-filter:var(--blg2);border:.5px solid var(--bd);border-radius:var(--rf);padding:11px 20px;font-size:.86rem;font-weight:600;color:var(--tx);opacity:0;z-index:9999;pointer-events:none;box-shadow:var(--smd);transition:all .40s cubic-bezier(.34,1.56,.64,1);max-width:84vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+/* Desktop right pane preview nav */
+@media(min-width:768px){
+  .right-pane .pnav{max-width:520px;width:100%}
+  .right-pane .pvwrap{max-width:520px;width:100%}
+}
+.mt8{margin-top:8px}.mt10{margin-top:10px}
 
-    <div id="app">
-      <!-- Navbar -->
-      <div class="nav">
-        <button class="ico-btn" id="settingsBtn" onclick="openSettings(this)">
-          ⚙️
+</style>
+</head>
+<body>
+<div class="bg-layer"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="orb o4"></div></div>
+
+<div id="app">
+  <!-- Navbar -->
+  <div class="nav">
+    <button class="ico-btn" id="settingsBtn" onclick="openSettings(this)">⚙️</button>
+    <div class="nav-title">Cover Generator</div>
+    <button class="pill-btn" onclick="resetForm()">↺ Reset</button>
+  </div>
+
+  <!-- Body -->
+  <div class="body-wrap">
+    <!-- LEFT PANE -->
+    <div class="left-pane">
+      <div class="form-scroll" id="formScroll">
+        <!-- Segmented -->
+        <div class="seg" id="mainSeg">
+          <div class="seg-pill" id="segPill"></div>
+          <button class="seg-btn active" id="tabA" onclick="switchTab('form',0)">✏️ Isi Data</button>
+          <button class="seg-btn" id="tabB" onclick="switchTab('preview',1)">👁 Preview</button>
+        </div>
+
+        <!-- FORM PANEL -->
+        <div class="panel active" id="panelForm">
+          <div class="alert" id="alertBox"></div>
+
+          <div class="slbl">Informasi Modul</div>
+          <div class="card"><div class="card-body">
+            <div class="fr"><div class="fl">Nomor Modul <span class="req">*</span></div>
+              <div class="mod-wrap"><span class="mod-pfx">MODUL</span><input class="inp" type="number" id="nomorModul" value="1" min="1" max="99" oninput="qup()"></div></div>
+            <div class="fr"><div class="fl">Judul Modul <span class="req">*</span></div><input class="inp" type="text" id="judulModul" placeholder="JUDUL MODUL PRAKTIKUM" oninput="qup()"></div>
+            <div class="fr"><div class="fl">Mata Kuliah <span class="req">*</span></div>
+              <div class="pfx"><span class="pfx-txt">Laporan Praktikum</span><input class="inp" type="text" id="mataKuliah" placeholder="Nama Matkul" oninput="qup()"></div></div>
+          </div></div>
+
+          <div class="slbl">Data Mahasiswa</div>
+          <div class="card"><div class="card-body">
+            <div class="fr"><div class="fl">Nama Lengkap <span class="req">*</span></div><input class="inp" type="text" id="namaM" placeholder="Nama Lengkap" oninput="qup()"></div>
+            <div class="fr"><div class="fl">NIM <span class="req">*</span></div><input class="inp" type="text" id="nimM" placeholder="Nomor Induk Mahasiswa" oninput="qup()"></div>
+            <div class="fr"><div class="fl">Kelas <span class="req">*</span></div>
+              <div class="kctr" id="kctr"><div class="kpill" id="kpill"></div>
+                <button class="kbtn active" onclick="setKelas('RA',0)">RA</button>
+                <button class="kbtn" onclick="setKelas('RB',1)">RB</button>
+                <button class="kbtn" onclick="setKelas('RC',2)">RC</button>
+              </div><input type="hidden" id="kelasM" value="RA"></div>
+            <div class="fr"><div class="fl">Kelompok <span class="badge">Opsional</span></div><input class="inp" type="text" id="kelompokM" placeholder="Kosongkan jika tidak ada" oninput="qup()"></div>
+          </div></div>
+
+          <div class="slbl">Asisten Laboratorium</div>
+          <div class="card"><div class="card-body">
+            <div id="aitList"></div>
+            <button class="add-a" onclick="addA()">＋ Tambah Asisten</button>
+            <div id="aitDropRow" class="fr mt10" style="display:none">
+              <div class="fl">Asisten Pengesah (Hal.2)</div>
+              <select class="sel" id="selAsisten" onchange="qup()"></select>
+            </div>
+          </div></div>
+
+          <div class="slbl">Lembar Pengesahan</div>
+          <div class="card"><div class="card-body">
+            <div class="fr"><div class="fl">Tanggal Praktikum <span class="req">*</span></div><input class="inp" type="date" id="tglPraktikum" oninput="qup()"></div>
+            <div class="fr"><div class="fl">Tempat Praktikum <span class="req">*</span></div>
+              <select class="sel" id="lokasiPraktikum" onchange="qup()">
+                <option value="">— Pilih Lokasi —</option>
+                <option>Laboratorium Rekayasa Instrumentasi dan Automasi</option>
+                <option>Laboratorium Komputer</option><option>Laboratorium Fisika</option>
+                <option>Laboratorium Kimia</option><option>Laboratorium Biologi</option>
+                <option>Laboratorium Elektronika</option><option>Laboratorium Jaringan</option>
+                <option>Laboratorium Pemrograman</option><option>Laboratorium Mesin</option>
+                <option>Ruang Kelas</option>
+              </select></div>
+            <div class="fr"><div class="fl">Tanggal TTD</div>
+              <div class="g2">
+                <div><div class="slbl2" style="margin-bottom:4px">Tanggal</div><input class="inp" type="number" id="sigDay" min="1" max="31" placeholder="19" oninput="qup()"></div>
+                <div><div class="slbl2" style="margin-bottom:4px">Bulan</div>
+                  <select class="sel" id="sigMonth" onchange="qup()">
+                    <option>Januari</option><option>Februari</option><option>Maret</option><option>April</option>
+                    <option>Mei</option><option>Juni</option><option>Juli</option><option>Agustus</option>
+                    <option>September</option><option>Oktober</option><option>November</option><option>Desember</option>
+                  </select></div>
+              </div></div>
+          </div></div>
+          <div class="app-ft">Made with ❤️ by <strong>Dev Name</strong> · Cover Generator 2026</div>
+        </div><!-- /panelForm -->
+
+        <!-- PREVIEW PANEL (mobile) -->
+        <div class="panel" id="panelPreview">
+          <div class="pnav" style="max-width:100%">
+            <button class="pnav-btn active" id="mpb1" onclick="showPage(1)">📄 Halaman 1</button>
+            <button class="pnav-btn" id="mpb2" onclick="showPage(2)">📋 Halaman 2</button>
+          </div>
+          <div class="pvwrap" style="max-width:100%">
+            <div class="sc-outer" id="mso"><div class="scaler" id="msc">
+              <div class="pp active" id="mp1"><div id="mp1i" style="min-height:1123px;padding:113px 113px 113px 151px;display:flex;flex-direction:column;align-items:center;background:#fff"></div></div>
+              <div class="pp" id="mp2"><div id="mp2i" style="min-height:1123px;padding:113px 113px 113px 151px;display:flex;flex-direction:column;background:#fff"></div></div>
+            </div></div>
+          </div>
+        </div><!-- /panelPreview -->
+
+      </div><!-- /form-scroll -->
+
+      <!-- TAB BAR -->
+      <div class="tab-bar" id="tabBar">
+        <button class="t-btn t-primary" onclick="exportPDF()">⬇ PDF</button>
+        <button class="t-btn t-accent" onclick="exportDOCX()">⬇ DOCX</button>
+        <button class="t-btn t-ghost" onclick="switchTab('preview',1);setTimeout(scaleAll,60)">👁 Preview</button>
+      </div>
+    </div><!-- /left-pane -->
+
+    <!-- RIGHT PANE (desktop) -->
+    <div class="right-pane" id="rightPane">
+      <div class="pnav">
+        <button class="pnav-btn active" id="dpb1" onclick="showPage(1)">📄 Halaman 1</button>
+        <button class="pnav-btn" id="dpb2" onclick="showPage(2)">📋 Halaman 2</button>
+      </div>
+      <div class="pvwrap">
+        <div class="sc-outer" id="dso"><div class="scaler" id="dsc">
+          <div class="pp active" id="dp1"><div id="dp1i" style="min-height:1123px;padding:113px 113px 113px 151px;display:flex;flex-direction:column;align-items:center;background:#fff"></div></div>
+          <div class="pp" id="dp2"><div id="dp2i" style="min-height:1123px;padding:113px 113px 113px 151px;display:flex;flex-direction:column;background:#fff"></div></div>
+        </div></div>
+      </div>
+    </div><!-- /right-pane -->
+
+  </div><!-- /body-wrap -->
+</div><!-- /app -->
+
+<!-- Settings sheet -->
+<div class="sovl" id="sovl" onclick="closeSettings()"></div>
+<div class="sht" id="sht">
+  <div class="shdl"></div>
+  <div class="shdr"><span class="shdr-title">⚙️ Pengaturan</span><button class="shdr-close" onclick="closeSettings()">✕</button></div>
+  <div class="shs">
+    <div class="slbl" style="margin-top:0">Tampilan</div>
+    <div class="thcard" onclick="toggleTheme()">
+      <div class="thr">
+        <div class="thbox"><span class="thico" id="thIco">🌙</span></div>
+        <div class="thtxt"><div class="thm" id="thMain">Mode Gelap</div><div class="ths" id="thSub">Ketuk untuk beralih ke mode terang</div></div>
+        <button class="thflip" id="thFlip" onclick="event.stopPropagation();toggleTheme()" title="Ganti tema">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
-        <div class="nav-title">Cover Generator</div>
-        <button class="pill-btn" onclick="resetForm()">↺ Reset</button>
-      </div>
-
-      <!-- Body -->
-      <div class="body-wrap">
-        <!-- LEFT PANE -->
-        <div class="left-pane">
-          <div class="form-scroll" id="formScroll">
-            <!-- Segmented -->
-            <div class="seg" id="mainSeg">
-              <div class="seg-pill" id="segPill"></div>
-              <button
-                class="seg-btn active"
-                id="tabA"
-                onclick="switchTab('form', 0)"
-              >
-                ✏️ Isi Data
-              </button>
-              <button
-                class="seg-btn"
-                id="tabB"
-                onclick="switchTab('preview', 1)"
-              >
-                👁 Preview
-              </button>
-            </div>
-
-            <!-- FORM PANEL -->
-            <div class="panel active" id="panelForm">
-              <div class="alert" id="alertBox"></div>
-
-              <div class="slbl">Informasi Modul</div>
-              <div class="card">
-                <div class="card-body">
-                  <div class="fr">
-                    <div class="fl">Nomor Modul <span class="req">*</span></div>
-                    <div class="mod-wrap">
-                      <span class="mod-pfx">MODUL</span
-                      ><input
-                        class="inp"
-                        type="number"
-                        id="nomorModul"
-                        value="1"
-                        min="1"
-                        max="99"
-                        oninput="qup()"
-                      />
-                    </div>
-                  </div>
-                  <div class="fr">
-                    <div class="fl">Judul Modul <span class="req">*</span></div>
-                    <input
-                      class="inp"
-                      type="text"
-                      id="judulModul"
-                      placeholder="JUDUL MODUL PRAKTIKUM"
-                      oninput="qup()"
-                    />
-                  </div>
-                  <div class="fr">
-                    <div class="fl">Mata Kuliah <span class="req">*</span></div>
-                    <div class="pfx">
-                      <span class="pfx-txt">Laporan Praktikum</span
-                      ><input
-                        class="inp"
-                        type="text"
-                        id="mataKuliah"
-                        placeholder="Nama Matkul"
-                        oninput="qup()"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="slbl">Data Mahasiswa</div>
-              <div class="card">
-                <div class="card-body">
-                  <div class="fr">
-                    <div class="fl">
-                      Nama Lengkap <span class="req">*</span>
-                    </div>
-                    <input
-                      class="inp"
-                      type="text"
-                      id="namaM"
-                      placeholder="Nama Lengkap"
-                      oninput="qup()"
-                    />
-                  </div>
-                  <div class="fr">
-                    <div class="fl">NIM <span class="req">*</span></div>
-                    <input
-                      class="inp"
-                      type="text"
-                      id="nimM"
-                      placeholder="Nomor Induk Mahasiswa"
-                      oninput="qup()"
-                    />
-                  </div>
-                  <div class="fr">
-                    <div class="fl">Kelas <span class="req">*</span></div>
-                    <div class="kctr" id="kctr">
-                      <div class="kpill" id="kpill"></div>
-                      <button class="kbtn active" onclick="setKelas('RA', 0)">
-                        RA
-                      </button>
-                      <button class="kbtn" onclick="setKelas('RB', 1)">
-                        RB
-                      </button>
-                      <button class="kbtn" onclick="setKelas('RC', 2)">
-                        RC
-                      </button>
-                    </div>
-                    <input type="hidden" id="kelasM" value="RA" />
-                  </div>
-                  <div class="fr">
-                    <div class="fl">
-                      Kelompok <span class="badge">Opsional</span>
-                    </div>
-                    <input
-                      class="inp"
-                      type="text"
-                      id="kelompokM"
-                      placeholder="Kosongkan jika tidak ada"
-                      oninput="qup()"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="slbl">Asisten Laboratorium</div>
-              <div class="card">
-                <div class="card-body">
-                  <div id="aitList"></div>
-                  <button class="add-a" onclick="addA()">
-                    ＋ Tambah Asisten
-                  </button>
-                  <div id="aitDropRow" class="fr mt10" style="display: none">
-                    <div class="fl">Asisten Pengesah (Hal.2)</div>
-                    <select
-                      class="sel"
-                      id="selAsisten"
-                      onchange="qup()"
-                    ></select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="slbl">Lembar Pengesahan</div>
-              <div class="card">
-                <div class="card-body">
-                  <div class="fr">
-                    <div class="fl">
-                      Tanggal Praktikum <span class="req">*</span>
-                    </div>
-                    <input
-                      class="inp"
-                      type="date"
-                      id="tglPraktikum"
-                      oninput="qup()"
-                    />
-                  </div>
-                  <div class="fr">
-                    <div class="fl">
-                      Tempat Praktikum <span class="req">*</span>
-                    </div>
-                    <select class="sel" id="lokasiPraktikum" onchange="qup()">
-                      <option value="">— Pilih Lokasi —</option>
-                      <option>
-                        Laboratorium Rekayasa Instrumentasi dan Automasi
-                      </option>
-                      <option>Laboratorium Komputer</option>
-                      <option>Laboratorium Fisika</option>
-                      <option>Laboratorium Kimia</option>
-                      <option>Laboratorium Biologi</option>
-                      <option>Laboratorium Elektronika</option>
-                      <option>Laboratorium Jaringan</option>
-                      <option>Laboratorium Pemrograman</option>
-                      <option>Laboratorium Mesin</option>
-                      <option>Ruang Kelas</option>
-                    </select>
-                  </div>
-                  <div class="fr">
-                    <div class="fl">Tanggal TTD</div>
-                    <div class="g2">
-                      <div>
-                        <div class="slbl2" style="margin-bottom: 4px">
-                          Tanggal
-                        </div>
-                        <input
-                          class="inp"
-                          type="number"
-                          id="sigDay"
-                          min="1"
-                          max="31"
-                          placeholder="19"
-                          oninput="qup()"
-                        />
-                      </div>
-                      <div>
-                        <div class="slbl2" style="margin-bottom: 4px">
-                          Bulan
-                        </div>
-                        <select class="sel" id="sigMonth" onchange="qup()">
-                          <option>Januari</option>
-                          <option>Februari</option>
-                          <option>Maret</option>
-                          <option>April</option>
-                          <option>Mei</option>
-                          <option>Juni</option>
-                          <option>Juli</option>
-                          <option>Agustus</option>
-                          <option>September</option>
-                          <option>Oktober</option>
-                          <option>November</option>
-                          <option>Desember</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="app-ft">
-                Made with ❤️ by <strong>Dev Name</strong> · Cover Generator 2026
-              </div>
-            </div>
-            <!-- /panelForm -->
-
-            <!-- PREVIEW PANEL (mobile) -->
-            <div class="panel" id="panelPreview">
-              <div class="pnav" style="max-width: 100%">
-                <button class="pnav-btn active" id="mpb1" onclick="showPage(1)">
-                  📄 Halaman 1
-                </button>
-                <button class="pnav-btn" id="mpb2" onclick="showPage(2)">
-                  📋 Halaman 2
-                </button>
-              </div>
-              <div class="pvwrap" style="max-width: 100%">
-                <div class="sc-outer" id="mso">
-                  <div class="scaler" id="msc">
-                    <div class="pp active" id="mp1">
-                      <div
-                        id="mp1i"
-                        style="
-                          min-height: 1123px;
-                          padding: 113px 113px 113px 151px;
-                          display: flex;
-                          flex-direction: column;
-                          align-items: center;
-                          background: #fff;
-                        "
-                      ></div>
-                    </div>
-                    <div class="pp" id="mp2">
-                      <div
-                        id="mp2i"
-                        style="
-                          min-height: 1123px;
-                          padding: 113px 113px 113px 151px;
-                          display: flex;
-                          flex-direction: column;
-                          background: #fff;
-                        "
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- /panelPreview -->
-          </div>
-          <!-- /form-scroll -->
-
-          <!-- TAB BAR -->
-          <div class="tab-bar" id="tabBar">
-            <button class="t-btn t-primary" onclick="exportPDF()">⬇ PDF</button>
-            <button class="t-btn t-accent" onclick="exportDOCX()">
-              ⬇ DOCX
-            </button>
-            <button
-              class="t-btn t-ghost"
-              onclick="
-                switchTab('preview', 1);
-                setTimeout(scaleAll, 60);
-              "
-            >
-              👁 Preview
-            </button>
-          </div>
-        </div>
-        <!-- /left-pane -->
-
-        <!-- RIGHT PANE (desktop) -->
-        <div class="right-pane" id="rightPane">
-          <div class="pnav">
-            <button class="pnav-btn active" id="dpb1" onclick="showPage(1)">
-              📄 Halaman 1
-            </button>
-            <button class="pnav-btn" id="dpb2" onclick="showPage(2)">
-              📋 Halaman 2
-            </button>
-          </div>
-          <div class="pvwrap">
-            <div class="sc-outer" id="dso">
-              <div class="scaler" id="dsc">
-                <div class="pp active" id="dp1">
-                  <div
-                    id="dp1i"
-                    style="
-                      min-height: 1123px;
-                      padding: 113px 113px 113px 151px;
-                      display: flex;
-                      flex-direction: column;
-                      align-items: center;
-                      background: #fff;
-                    "
-                  ></div>
-                </div>
-                <div class="pp" id="dp2">
-                  <div
-                    id="dp2i"
-                    style="
-                      min-height: 1123px;
-                      padding: 113px 113px 113px 151px;
-                      display: flex;
-                      flex-direction: column;
-                      background: #fff;
-                    "
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- /right-pane -->
-      </div>
-      <!-- /body-wrap -->
-    </div>
-    <!-- /app -->
-
-    <!-- Settings sheet -->
-    <div class="sovl" id="sovl" onclick="closeSettings()"></div>
-    <div class="sht" id="sht">
-      <div class="shdl"></div>
-      <div class="shdr">
-        <span class="shdr-title">⚙️ Pengaturan</span
-        ><button class="shdr-close" onclick="closeSettings()">✕</button>
-      </div>
-      <div class="shs">
-        <div class="slbl" style="margin-top: 0">Tampilan</div>
-        <div class="thcard" onclick="toggleTheme()">
-          <div class="thr">
-            <div class="thbox"><span class="thico" id="thIco">🌙</span></div>
-            <div class="thtxt">
-              <div class="thm" id="thMain">Mode Gelap</div>
-              <div class="ths" id="thSub">
-                Ketuk untuk beralih ke mode terang
-              </div>
-            </div>
-            <button
-              class="thflip"
-              id="thFlip"
-              onclick="
-                event.stopPropagation();
-                toggleTheme();
-              "
-              title="Ganti tema"
-            >
-              <svg
-                width="17"
-                height="17"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                <path d="M3 3v5h5" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="slbl mt10">Pilih Logo</div>
-        <div class="scard">
-          <div
-            class="srow"
-            style="flex-direction: column; align-items: stretch; gap: 10px"
-          >
-            <div class="lpick">
-              <div class="lopt sel2" id="loItera" onclick="selLogo('itera')">
-                <div class="lchk">
-                  <svg viewBox="0 0 10 8" fill="none">
-                    <path
-                      d="M1 4l3 3 5-6"
-                      stroke="white"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </div>
-                <img
-                  id="liImg"
-                  src="logo-itera.jpg"
-                  alt="ITERA"
-                  onerror="
-                    this.style.display = 'none';
-                    document.getElementById('liPh').style.display = 'flex';
-                  "
-                />
-                <div class="lph" id="liPh" style="display: none">🏛️</div>
-                <span class="lopt-name">Logo ITERA</span>
-              </div>
-              <div class="lopt" id="loRekinsa" onclick="selLogo('rekinsa')">
-                <div class="lchk">
-                  <svg viewBox="0 0 10 8" fill="none">
-                    <path
-                      d="M1 4l3 3 5-6"
-                      stroke="white"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </div>
-                <img
-                  id="lrImg"
-                  src="logo-rekinsa.jpg"
-                  alt="REKINSA"
-                  onerror="
-                    this.style.display = 'none';
-                    document.getElementById('lrPh').style.display = 'flex';
-                  "
-                />
-                <div class="lph" id="lrPh" style="display: none">🔬</div>
-                <span class="lopt-name">Logo REKINSA</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="slbl mt10">Ukuran Logo</div>
-        <div class="scard">
-          <div class="srow">
-            <div class="dim-grid" style="width: 100%">
-              <div>
-                <div class="dim-lbl">↔ Lebar</div>
-                <div class="dim-wrap">
-                  <input
-                    class="inp"
-                    type="number"
-                    id="logoW"
-                    value="4"
-                    min="1"
-                    max="12"
-                    oninput="qup()"
-                  /><span class="dim-unit">cm</span>
-                </div>
-              </div>
-              <div>
-                <div class="dim-lbl">↕ Tinggi</div>
-                <div class="dim-wrap">
-                  <input
-                    class="inp"
-                    type="number"
-                    id="logoH"
-                    value="4"
-                    min="1"
-                    max="12"
-                    oninput="qup()"
-                  /><span class="dim-unit">cm</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="slbl mt10">Margin Halaman A4 (cm)</div>
-        <div class="scard">
-          <div class="srow">
-            <div class="dim-grid" style="width: 100%">
-              <div>
-                <div class="dim-lbl">↑ Atas</div>
-                <div class="dim-wrap">
-                  <input
-                    class="inp"
-                    type="number"
-                    id="mTop"
-                    value="3"
-                    min="0.5"
-                    max="5"
-                    step="0.1"
-                    oninput="applyMargins()"
-                  /><span class="dim-unit">cm</span>
-                </div>
-              </div>
-              <div>
-                <div class="dim-lbl">↓ Bawah</div>
-                <div class="dim-wrap">
-                  <input
-                    class="inp"
-                    type="number"
-                    id="mBottom"
-                    value="3"
-                    min="0.5"
-                    max="5"
-                    step="0.1"
-                    oninput="applyMargins()"
-                  /><span class="dim-unit">cm</span>
-                </div>
-              </div>
-              <div>
-                <div class="dim-lbl">← Kiri</div>
-                <div class="dim-wrap">
-                  <input
-                    class="inp"
-                    type="number"
-                    id="mLeft"
-                    value="4"
-                    min="0.5"
-                    max="5"
-                    step="0.1"
-                    oninput="applyMargins()"
-                  /><span class="dim-unit">cm</span>
-                </div>
-              </div>
-              <div>
-                <div class="dim-lbl">→ Kanan</div>
-                <div class="dim-wrap">
-                  <input
-                    class="inp"
-                    type="number"
-                    id="mRight"
-                    value="3"
-                    min="0.5"
-                    max="5"
-                    step="0.1"
-                    oninput="applyMargins()"
-                  /><span class="dim-unit">cm</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="slbl mt10">Kirim Feedback</div>
-        <div class="fbcard">
-          <div class="fl" style="margin-bottom: 7px">Pesan Anda</div>
-          <textarea
-            class="fbta"
-            id="fbText"
-            placeholder="Tulis masukan, saran, atau laporan bug…"
-            rows="3"
-          ></textarea>
-          <div class="fbbtn-row">
-            <button class="fbbtn fb-em" onclick="sendFB('email')">
-              <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
-                <rect
-                  x=".5"
-                  y=".5"
-                  width="13"
-                  height="9"
-                  rx="1.5"
-                  stroke="white"
-                  stroke-opacity=".8"
-                />
-                <path
-                  d="M1 1l6 4.5L13 1"
-                  stroke="white"
-                  stroke-opacity=".8"
-                  stroke-width="1.1"
-                  stroke-linecap="round"
-                /></svg
-              >Email
-            </button>
-            <button class="fbbtn fb-wa" onclick="sendFB('wa')">
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="white"
-                opacity=".9"
-              >
-                <path
-                  d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"
-                />
-                <path
-                  d="M12 0C5.373 0 0 5.373 0 12c0 2.096.536 4.07 1.475 5.79L0 24l6.384-1.449A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.793 9.793 0 01-5.02-1.383l-.36-.214-3.732.848.88-3.63-.235-.373A9.78 9.78 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"
-                /></svg
-              >WhatsApp
-            </button>
-          </div>
-        </div>
-        <div class="cred">
-          <div class="cred-soc">
-            <a class="cred-a" href="#" title="Instagram">📸</a>
-            <a class="cred-a" href="#" title="GitHub">🐙</a>
-            <a class="cred-a" href="#" title="LinkedIn">💼</a>
-            <a class="cred-a" href="#" title="Twitter/X">🐦</a>
-          </div>
-          <div class="cred-name">Dibuat oleh <strong>Dev Name</strong></div>
-          <div class="cred-yr">Cover Generator · 2026</div>
-        </div>
       </div>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <div class="slbl mt10">Pilih Logo</div>
+    <div class="scard"><div class="srow" style="flex-direction:column;align-items:stretch;gap:10px">
+      <div class="lpick">
+        <div class="lopt sel2" id="loItera" onclick="selLogo('itera')">
+          <div class="lchk"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <img id="liImg" src="logo-itera.jpg" alt="ITERA" onerror="this.style.display='none';document.getElementById('liPh').style.display='flex'">
+          <div class="lph" id="liPh" style="display:none">🏛️</div>
+          <span class="lopt-name">Logo ITERA</span>
+        </div>
+        <div class="lopt" id="loRekinsa" onclick="selLogo('rekinsa')">
+          <div class="lchk"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <img id="lrImg" src="logo-rekinsa.jpg" alt="REKINSA" onerror="this.style.display='none';document.getElementById('lrPh').style.display='flex'">
+          <div class="lph" id="lrPh" style="display:none">🔬</div>
+          <span class="lopt-name">Logo REKINSA</span>
+        </div>
+      </div>
+    </div></div>
 
-    <script>
-      /* ═══ CONSTANTS ═══ */
-      const YR = new Date().getFullYear();
-      const MO = [
-        "Januari",
-        "Februari",
-        "Maret",
-        "April",
-        "Mei",
-        "Juni",
-        "Juli",
-        "Agustus",
-        "September",
-        "Oktober",
-        "November",
-        "Desember",
-      ];
-      const LAB = "LABORATORIUM REKAYASA INSTRUMENTASI DAN AUTOMASI";
-      const FAK = "FAKULTAS TEKNOLOGI INDUSTRI";
-      const UNIV = "INSTITUT TEKNOLOGI SUMATERA";
-      const CM = 37.795;
+    <div class="slbl mt10">Ukuran Logo</div>
+    <div class="scard"><div class="srow">
+      <div class="dim-grid" style="width:100%">
+        <div><div class="dim-lbl">↔ Lebar</div><div class="dim-wrap"><input class="inp" type="number" id="logoW" value="4" min="1" max="12" oninput="qup()"><span class="dim-unit">cm</span></div></div>
+        <div><div class="dim-lbl">↕ Tinggi</div><div class="dim-wrap"><input class="inp" type="number" id="logoH" value="4" min="1" max="12" oninput="qup()"><span class="dim-unit">cm</span></div></div>
+      </div>
+    </div></div>
 
-      /* ═══ STATE ═══ */
-      let asis = [],
-        dark = true,
-        tab = "form",
-        logo = "itera",
-        lastSY = 0;
+    <div class="slbl mt10">Margin Halaman A4 (cm)</div>
+    <div class="scard"><div class="srow">
+      <div class="dim-grid" style="width:100%">
+        <div><div class="dim-lbl">↑ Atas</div><div class="dim-wrap"><input class="inp" type="number" id="mTop" value="3" min="0.5" max="5" step="0.1" oninput="applyMargins()"><span class="dim-unit">cm</span></div></div>
+        <div><div class="dim-lbl">↓ Bawah</div><div class="dim-wrap"><input class="inp" type="number" id="mBottom" value="3" min="0.5" max="5" step="0.1" oninput="applyMargins()"><span class="dim-unit">cm</span></div></div>
+        <div><div class="dim-lbl">← Kiri</div><div class="dim-wrap"><input class="inp" type="number" id="mLeft" value="4" min="0.5" max="5" step="0.1" oninput="applyMargins()"><span class="dim-unit">cm</span></div></div>
+        <div><div class="dim-lbl">→ Kanan</div><div class="dim-wrap"><input class="inp" type="number" id="mRight" value="3" min="0.5" max="5" step="0.1" oninput="applyMargins()"><span class="dim-unit">cm</span></div></div>
+      </div>
+    </div></div>
 
-      /* ═══ INIT ═══ */
-      document.addEventListener("DOMContentLoaded", () => {
-        const n = new Date();
-        el("sigMonth").value = MO[n.getMonth()];
-        el("sigDay").value = n.getDate();
-        addA();
-        loadSt();
-        applyTheme();
-        applyMargins();
-        qup();
-        initPills();
-        scaleAll();
-        window.addEventListener("resize", () => {
-          scaleAll();
-          initPills();
-        });
-        const sc = el("formScroll");
-        sc.addEventListener(
-          "scroll",
-          () => {
-            const y = sc.scrollTop,
-              tb = el("tabBar");
-            if (y > lastSY + 12) tb.classList.add("hide");
-            else if (y < lastSY - 12) tb.classList.remove("hide");
-            lastSY = y;
-          },
-          { passive: true },
-        );
-      });
+    <div class="slbl mt10">Kirim Feedback</div>
+    <div class="fbcard">
+      <div class="fl" style="margin-bottom:7px">Pesan Anda</div>
+      <textarea class="fbta" id="fbText" placeholder="Tulis masukan, saran, atau laporan bug…" rows="3"></textarea>
+      <div class="fbbtn-row">
+        <button class="fbbtn fb-em" onclick="sendFB('email')">
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><rect x=".5" y=".5" width="13" height="9" rx="1.5" stroke="white" stroke-opacity=".8"/><path d="M1 1l6 4.5L13 1" stroke="white" stroke-opacity=".8" stroke-width="1.1" stroke-linecap="round"/></svg>Email
+        </button>
+        <button class="fbbtn fb-wa" onclick="sendFB('wa')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="white" opacity=".9"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.096.536 4.07 1.475 5.79L0 24l6.384-1.449A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.793 9.793 0 01-5.02-1.383l-.36-.214-3.732.848.88-3.63-.235-.373A9.78 9.78 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>WhatsApp
+        </button>
+      </div>
+    </div>
+    <div class="cred">
+      <div class="cred-soc">
+        <a class="cred-a" href="#" title="Instagram">📸</a>
+        <a class="cred-a" href="#" title="GitHub">🐙</a>
+        <a class="cred-a" href="#" title="LinkedIn">💼</a>
+        <a class="cred-a" href="#" title="Twitter/X">🐦</a>
+      </div>
+      <div class="cred-name">Dibuat oleh <strong>Dev Name</strong></div>
+      <div class="cred-yr">Cover Generator · 2026</div>
+    </div>
+  </div>
+</div>
 
-      /* ═══ HELPERS ═══ */
-      function el(id) {
-        return document.getElementById(id);
-      }
-      function gv(id) {
-        return el(id)?.value?.trim() ?? "";
-      }
-      function esc(s) {
-        return (s || "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
-      }
-      function cm2px(c) {
-        return Math.round(parseFloat(c || 0) * CM);
-      }
-      function cm2dxa(c) {
-        return Math.round(parseFloat(c || 0) * 566.9);
-      }
+<div class="toast" id="toast"></div>
 
-      function toast(m, d = 3000) {
-        const t = el("toast");
-        t.textContent = m;
-        t.classList.add("on");
-        clearTimeout(t._t);
-        t._t = setTimeout(() => t.classList.remove("on"), d);
-      }
+<script>
+/* ═══ CONSTANTS ═══ */
+const YR = new Date().getFullYear();
+const MO = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const LAB  = 'LABORATORIUM REKAYASA INSTRUMENTASI DAN AUTOMASI';
+const FAK  = 'FAKULTAS TEKNOLOGI INDUSTRI';
+const UNIV = 'INSTITUT TEKNOLOGI SUMATERA';
+const CM   = 37.795;
 
-      /* ═══ STORAGE ═══ */
-      function saveSt() {
-        try {
-          localStorage.setItem(
-            "cg10",
-            JSON.stringify({
-              nm: gv("nomorModul"),
-              jm: gv("judulModul"),
-              mk: gv("mataKuliah"),
-              na: gv("namaM"),
-              ni: gv("nimM"),
-              kl: gv("kelasM"),
-              kg: gv("kelompokM"),
-              tp: gv("tglPraktikum"),
-              lp: gv("lokasiPraktikum"),
-              sd: gv("sigDay"),
-              sm: gv("sigMonth"),
-              lw: gv("logoW"),
-              lh: gv("logoH"),
-              mt: gv("mTop"),
-              mb: gv("mBottom"),
-              ml: gv("mLeft"),
-              mr: gv("mRight"),
-              asis,
-              dark,
-              logo,
-              sa: el("selAsisten").value,
-            }),
-          );
-        } catch (e) {}
-      }
-      function loadSt() {
-        try {
-          const d = JSON.parse(localStorage.getItem("cg10") || "null");
-          if (!d) return;
-          const m = {
-            nm: "nomorModul",
-            jm: "judulModul",
-            mk: "mataKuliah",
-            na: "namaM",
-            ni: "nimM",
-            kg: "kelompokM",
-            tp: "tglPraktikum",
-            lp: "lokasiPraktikum",
-            sd: "sigDay",
-            sm: "sigMonth",
-            lw: "logoW",
-            lh: "logoH",
-            mt: "mTop",
-            mb: "mBottom",
-            ml: "mLeft",
-            mr: "mRight",
-          };
-          Object.entries(m).forEach(([k, v]) => {
-            if (d[k] !== undefined && el(v)) el(v).value = d[k];
-          });
-          if (d.kl) setKelas(d.kl, ["RA", "RB", "RC"].indexOf(d.kl));
-          if (d.asis?.length) {
-            asis = d.asis;
-            renderA();
-          }
-          if (d.dark !== undefined) dark = d.dark;
-          if (d.logo) selLogo(d.logo, 1);
-          if (d.sa)
-            setTimeout(() => {
-              el("selAsisten").value = d.sa;
-            }, 60);
-        } catch (e) {}
-      }
+/* ═══ STATE ═══ */
+let asis=[], dark=true, tab='form', logo='itera';
 
-      /* ═══ PILLS (segmented gliders) ═══ */
-      function initPills() {
-        const sb = el(tab === "form" ? "tabA" : "tabB");
-        moveSeg(sb);
-        const ak = document.querySelector(".kbtn.active");
-        if (ak) moveKelas(ak);
-      }
-      function moveSeg(btn) {
-        const s = el("mainSeg"),
-          p = el("segPill");
-        if (!s || !p || !btn) return;
-        const sr = s.getBoundingClientRect(),
-          br = btn.getBoundingClientRect();
-        p.style.left = br.left - sr.left + 3 + "px";
-        p.style.width = br.width - 6 + "px";
-      }
-      function moveKelas(btn) {
-        const c = el("kctr"),
-          p = el("kpill");
-        if (!c || !p || !btn) return;
-        const cr = c.getBoundingClientRect(),
-          br = btn.getBoundingClientRect();
-        p.style.left = br.left - cr.left + 3 + "px";
-        p.style.width = br.width - 6 + "px";
-      }
+/* ═══ INIT ═══ */
+document.addEventListener('DOMContentLoaded',()=>{
+  const n=new Date();
+  el('sigMonth').value=MO[n.getMonth()];
+  el('sigDay').value=n.getDate();
+  addA();
+  loadSt();
+  applyTheme();
+  applyMargins();
+  qup();
+  initPills();
+  scaleAll();
+  window.addEventListener('resize',()=>{scaleAll();initPills();});
+});
 
-      /* ═══ TABS ═══ */
-      function switchTab(t, idx) {
-        if (t === tab) return;
-        const prev = tab;
-        tab = t;
-        const goR = idx > (prev === "form" ? 0 : 1);
-        const op = el(prev === "form" ? "panelForm" : "panelPreview");
-        const np = el(t === "form" ? "panelForm" : "panelPreview");
-        op.style.cssText =
-          "position:absolute;width:100%;top:0;left:0;z-index:0;";
-        op.style.animation = `${goR ? "sfl" : "sfr"} .28s cubic-bezier(.4,0,.2,1) reverse both`;
-        op.classList.remove("active");
-        setTimeout(() => {
-          op.style.cssText = "display:none";
-        }, 290);
-        np.style.cssText = "";
-        np.style.animation = `${goR ? "sfr" : "sfl"} .32s cubic-bezier(.4,0,.2,1) both`;
-        np.classList.add("active");
-        el("tabA").classList.toggle("active", t === "form");
-        el("tabB").classList.toggle("active", t === "preview");
-        moveSeg(el(t === "form" ? "tabA" : "tabB"));
-        if (t === "preview") {
-          qup();
-          setTimeout(scaleAll, 60);
-        }
-        el("tabBar").classList.remove("hide");
-      }
+/* ═══ HELPERS ═══ */
+function el(id){return document.getElementById(id);}
+function gv(id){return el(id)?.value?.trim()??'';}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function cm2px(c){return Math.round(parseFloat(c||0)*CM);}
+function cm2dxa(c){return Math.round(parseFloat(c||0)*566.9);}
 
-      /* ═══ SHOW PAGE ═══ */
-      function showPage(n) {
-        ["mp1", "mp2", "dp1", "dp2"].forEach((id) => {
-          el(id)?.classList.toggle(
-            "active",
-            (id.endsWith("1") && n === 1) || (id.endsWith("2") && n === 2),
-          );
-        });
-        ["mpb1", "mpb2", "dpb1", "dpb2"].forEach((id) => {
-          el(id)?.classList.toggle(
-            "active",
-            id.endsWith("1") ? n === 1 : n === 2,
-          );
-        });
-        setTimeout(scaleAll, 28);
-      }
+function toast(m,d=3000){
+  const t=el('toast');t.textContent=m;t.classList.add('on');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),d);
+}
 
-      /* ═══ SCALE ═══ */
-      function scaleAll() {
-        sc2("mso", "msc", ["mp1", "mp2"]);
-        sc2("dso", "dsc", ["dp1", "dp2"]);
-      }
-      function sc2(oid, sid, pids) {
-        const o = el(oid),
-          s = el(sid);
-        if (!o || !s) return;
-        const w = o.clientWidth;
-        if (!w) return;
-        const k = w / 794;
-        s.style.transform = `scale(${k})`;
-        const ai = pids.find((id) => el(id)?.classList.contains("active"));
-        const pg = ai ? el(ai) : null;
-        o.style.height = Math.ceil((pg ? pg.offsetHeight : 1123) * k) + "px";
-      }
+/* ═══ STORAGE ═══ */
+function saveSt(){
+  try{localStorage.setItem('cg10',JSON.stringify({
+    nm:gv('nomorModul'),jm:gv('judulModul'),mk:gv('mataKuliah'),
+    na:gv('namaM'),ni:gv('nimM'),kl:gv('kelasM'),kg:gv('kelompokM'),
+    tp:gv('tglPraktikum'),lp:gv('lokasiPraktikum'),
+    sd:gv('sigDay'),sm:gv('sigMonth'),
+    lw:gv('logoW'),lh:gv('logoH'),
+    mt:gv('mTop'),mb:gv('mBottom'),ml:gv('mLeft'),mr:gv('mRight'),
+    asis,dark,logo,sa:el('selAsisten').value
+  }));}catch(e){}
+}
+function loadSt(){
+  try{
+    const d=JSON.parse(localStorage.getItem('cg10')||'null');if(!d)return;
+    const m={nm:'nomorModul',jm:'judulModul',mk:'mataKuliah',na:'namaM',ni:'nimM',kg:'kelompokM',
+             tp:'tglPraktikum',lp:'lokasiPraktikum',sd:'sigDay',sm:'sigMonth',
+             lw:'logoW',lh:'logoH',mt:'mTop',mb:'mBottom',ml:'mLeft',mr:'mRight'};
+    Object.entries(m).forEach(([k,v])=>{if(d[k]!==undefined&&el(v))el(v).value=d[k];});
+    if(d.kl)setKelas(d.kl,['RA','RB','RC'].indexOf(d.kl));
+    if(d.asis?.length){asis=d.asis;renderA();}
+    if(d.dark!==undefined)dark=d.dark;
+    if(d.logo)selLogo(d.logo,1);
+    if(d.sa)setTimeout(()=>{el('selAsisten').value=d.sa;},60);
+  }catch(e){}
+}
 
-      /* ═══ KELAS ═══ */
-      function setKelas(v, i) {
-        el("kelasM").value = v;
-        document
-          .querySelectorAll(".kbtn")
-          .forEach((b, j) => b.classList.toggle("active", j === i));
-        requestAnimationFrame(() =>
-          moveKelas(document.querySelectorAll(".kbtn")[i]),
-        );
-        qup();
-        saveSt();
-      }
+/* ═══ PILLS (segmented gliders) ═══ */
+function initPills(){
+  const sb=el(tab==='form'?'tabA':'tabB');moveSeg(sb);
+  const ak=document.querySelector('.kbtn.active');if(ak)moveKelas(ak);
+}
+function moveSeg(btn){
+  const s=el('mainSeg'),p=el('segPill');if(!s||!p||!btn)return;
+  const sr=s.getBoundingClientRect(),br=btn.getBoundingClientRect();
+  p.style.left=(br.left-sr.left+3)+'px';p.style.width=(br.width-6)+'px';
+}
+function moveKelas(btn){
+  const c=el('kctr'),p=el('kpill');if(!c||!p||!btn)return;
+  const cr=c.getBoundingClientRect(),br=btn.getBoundingClientRect();
+  p.style.left=(br.left-cr.left+3)+'px';p.style.width=(br.width-6)+'px';
+}
 
-      /* ═══ MARGINS ═══ */
-      function applyMargins() {
-        const t = cm2px(gv("mTop") || 3),
-          b = cm2px(gv("mBottom") || 3);
-        const l = cm2px(gv("mLeft") || 4),
-          r = cm2px(gv("mRight") || 3);
-        const p = `${t}px ${r}px ${b}px ${l}px`;
-        ["mp1i", "mp2i", "dp1i", "dp2i"].forEach((id) => {
-          const e = el(id);
-          if (e) e.style.padding = p;
-        });
-        qup();
-      }
+/* ═══ TABS ═══ */
+function switchTab(t,idx){
+  if(t===tab)return;
+  const prev=tab;tab=t;
+  const goR=idx>(prev==='form'?0:1);
+  const op=el(prev==='form'?'panelForm':'panelPreview');
+  const np=el(t==='form'?'panelForm':'panelPreview');
+  op.style.cssText='position:absolute;width:100%;top:0;left:0;z-index:0;';
+  op.style.animation=`${goR?'sfl':'sfr'} .28s cubic-bezier(.4,0,.2,1) reverse both`;
+  op.classList.remove('active');
+  setTimeout(()=>{op.style.cssText='display:none';},290);
+  np.style.cssText='';np.style.animation=`${goR?'sfr':'sfl'} .32s cubic-bezier(.4,0,.2,1) both`;
+  np.classList.add('active');
+  el('tabA').classList.toggle('active',t==='form');
+  el('tabB').classList.toggle('active',t==='preview');
+  moveSeg(el(t==='form'?'tabA':'tabB'));
+  if(t==='preview'){qup();setTimeout(scaleAll,60);}
+  el('tabBar').classList.remove('hide');
+}
 
-      /* ═══ LOGO ═══ */
-      function selLogo(k, skip) {
-        logo = k;
-        el("loItera").classList.toggle("sel2", k === "itera");
-        el("loRekinsa").classList.toggle("sel2", k === "rekinsa");
-        qup();
-        if (!skip) saveSt();
-      }
-      function logoSrc() {
-        return logo === "itera" ? "logo-itera.jpg" : "logo-rekinsa.jpg";
-      }
-      function logoFB() {
-        return logo === "itera" ? "🏛️" : "🔬";
-      }
+/* ═══ SHOW PAGE ═══ */
+function showPage(n){
+  ['mp1','mp2','dp1','dp2'].forEach(id=>{
+    el(id)?.classList.toggle('active',(id.endsWith('1')&&n===1)||(id.endsWith('2')&&n===2));
+  });
+  ['mpb1','mpb2','dpb1','dpb2'].forEach(id=>{
+    el(id)?.classList.toggle('active',id.endsWith('1')?(n===1):(n===2));
+  });
+  setTimeout(scaleAll,28);
+}
 
-      /* ═══ ASSISTANTS ═══ */
-      function addA() {
-        asis.push({ n: "", m: "" });
-        renderA();
-        qup();
-      }
-      function remA(i) {
-        if (asis.length <= 1) {
-          toast("Minimal 1 asisten");
-          return;
-        }
-        asis.splice(i, 1);
-        renderA();
-        qup();
-      }
-      function renderA() {
-        el("aitList").innerHTML = asis
-          .map(
-            (a, i) => `
+/* ═══ SCALE ═══ */
+function scaleAll(){sc2('mso','msc',['mp1','mp2']);sc2('dso','dsc',['dp1','dp2']);}
+function sc2(oid,sid,pids){
+  const o=el(oid),s=el(sid);if(!o||!s)return;
+  const w=o.clientWidth;if(!w)return;
+  const k=w/794;s.style.transform=`scale(${k})`;
+  const ai=pids.find(id=>el(id)?.classList.contains('active'));
+  const pg=ai?el(ai):null;
+  o.style.height=Math.ceil((pg?pg.offsetHeight:1123)*k)+'px';
+}
+
+/* ═══ KELAS ═══ */
+function setKelas(v,i){
+  el('kelasM').value=v;
+  document.querySelectorAll('.kbtn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  requestAnimationFrame(()=>moveKelas(document.querySelectorAll('.kbtn')[i]));
+  qup();saveSt();
+}
+
+/* ═══ MARGINS ═══ */
+function applyMargins(){
+  const t=cm2px(gv('mTop')||3),b=cm2px(gv('mBottom')||3);
+  const l=cm2px(gv('mLeft')||4),r=cm2px(gv('mRight')||3);
+  const p=`${t}px ${r}px ${b}px ${l}px`;
+  ['mp1i','mp2i','dp1i','dp2i'].forEach(id=>{const e=el(id);if(e)e.style.padding=p;});
+  qup();
+}
+
+/* ═══ LOGO ═══ */
+function selLogo(k,skip){
+  logo=k;
+  el('loItera').classList.toggle('sel2',k==='itera');
+  el('loRekinsa').classList.toggle('sel2',k==='rekinsa');
+  qup();if(!skip)saveSt();
+}
+function logoSrc(){return logo==='itera'?'logo-itera.jpg':'logo-rekinsa.jpg';}
+function logoFB(){return logo==='itera'?'🏛️':'🔬';}
+
+/* ═══ ASSISTANTS ═══ */
+function addA(){asis.push({n:'',m:''});renderA();qup();}
+function remA(i){if(asis.length<=1){toast('Minimal 1 asisten');return;}asis.splice(i,1);renderA();qup();}
+function renderA(){
+  el('aitList').innerHTML=asis.map((a,i)=>`
     <div class="ait">
-      ${asis.length > 1 ? `<button class="arm" onclick="remA(${i})">✕</button>` : ""}
-      <div class="slbl2">Nama Asisten ${i + 1}</div>
+      ${asis.length>1?`<button class="arm" onclick="remA(${i})">✕</button>`:''}
+      <div class="slbl2">Nama Asisten ${i+1}</div>
       <input class="inp" type="text" placeholder="Nama" value="${esc(a.n)}" oninput="updA(${i},'n',this.value)">
-      <div class="slbl2 mt8">NIM Asisten ${i + 1}</div>
+      <div class="slbl2 mt8">NIM Asisten ${i+1}</div>
       <input class="inp" type="text" placeholder="NIM / ID" value="${esc(a.m)}" oninput="updA(${i},'m',this.value)">
-    </div>`,
-          )
-          .join("");
-        syncDrop();
-      }
-      function updA(i, f, v) {
-        asis[i][f] = v;
-        syncDrop();
-        qup();
-        saveSt();
-      }
-      function syncDrop() {
-        const s = el("selAsisten"),
-          r = el("aitDropRow"),
-          c = s.value;
-        if (asis.length <= 1) {
-          r.style.display = "none";
-          s.innerHTML = asis[0]?.n
-            ? `<option value="0">${esc(asis[0].n)}</option>`
-            : "";
-          s.value = "0";
-        } else {
-          r.style.display = "block";
-          s.innerHTML =
-            '<option value="">— Pilih Asisten —</option>' +
-            asis
-              .map(
-                (a, i) =>
-                  `<option value="${i}" ${c == i ? "selected" : ""}>${esc(a.n || "Asisten " + (i + 1))}</option>`,
-              )
-              .join("");
-        }
-      }
-      function getA() {
-        if (asis.length === 1) return asis[0];
-        const i = el("selAsisten").value;
-        return i === "" ? null : asis[parseInt(i)] || null;
-      }
+    </div>`).join('');
+  syncDrop();
+}
+function updA(i,f,v){asis[i][f]=v;syncDrop();qup();saveSt();}
+function syncDrop(){
+  const s=el('selAsisten'),r=el('aitDropRow'),c=s.value;
+  if(asis.length<=1){r.style.display='none';s.innerHTML=asis[0]?.n?`<option value="0">${esc(asis[0].n)}</option>`:'';s.value='0';}
+  else{r.style.display='block';s.innerHTML='<option value="">— Pilih Asisten —</option>'+asis.map((a,i)=>`<option value="${i}" ${c==i?'selected':''}>${esc(a.n||'Asisten '+(i+1))}</option>`).join('');}
+}
+function getA(){
+  if(asis.length===1)return asis[0];
+  const i=el('selAsisten').value;return i===''?null:(asis[parseInt(i)]||null);
+}
 
-      /* ═══ THEME ═══ */
-      function toggleTheme() {
-        dark = !dark;
-        applyTheme();
-        saveSt();
-        const b = el("thFlip");
-        if (b) {
-          b.classList.remove("sp");
-          void b.offsetWidth;
-          b.classList.add("sp");
-          setTimeout(() => b.classList.remove("sp"), 500);
-        }
-      }
-      function applyTheme() {
-        document.body.setAttribute("data-theme", dark ? "dark" : "");
-        el("thIco").textContent = dark ? "🌙" : "☀️";
-        el("thMain").textContent = dark ? "Mode Gelap" : "Mode Terang";
-        el("thSub").textContent = dark
-          ? "Ketuk untuk beralih ke mode terang"
-          : "Ketuk untuk beralih ke mode gelap";
-      }
+/* ═══ THEME ═══ */
+function toggleTheme(){
+  dark=!dark;applyTheme();saveSt();
+  const b=el('thFlip');if(b){b.classList.remove('sp');void b.offsetWidth;b.classList.add('sp');setTimeout(()=>b.classList.remove('sp'),500);}
+}
+function applyTheme(){
+  document.body.setAttribute('data-theme',dark?'dark':'');
+  el('thIco').textContent=dark?'🌙':'☀️';
+  el('thMain').textContent=dark?'Mode Gelap':'Mode Terang';
+  el('thSub').textContent=dark?'Ketuk untuk beralih ke mode terang':'Ketuk untuk beralih ke mode gelap';
+}
 
-      /* ═══ SETTINGS ═══ */
-      function openSettings(btn) {
-        el("sovl").classList.add("on");
-        el("sht").classList.add("on");
-        if (btn) {
-          btn.style.transform = "rotate(90deg) scale(1.1)";
-          setTimeout(() => (btn.style.transform = ""), 460);
-        }
-      }
-      function closeSettings() {
-        el("sovl").classList.remove("on");
-        el("sht").classList.remove("on");
-      }
+/* ═══ SETTINGS ═══ */
+function openSettings(btn){
+  el('sovl').classList.add('on');el('sht').classList.add('on');
+  if(btn){btn.style.transform='rotate(90deg) scale(1.1)';setTimeout(()=>btn.style.transform='',460);}
+}
+function closeSettings(){el('sovl').classList.remove('on');el('sht').classList.remove('on');}
 
-      /* ═══ FEEDBACK ═══ */
-      function sendFB(ch) {
-        const t = el("fbText").value.trim();
-        if (!t) {
-          toast("⚠️ Tulis pesan dahulu");
-          return;
-        }
-        const e = encodeURIComponent(t);
-        if (ch === "email")
-          window.open(
-            `mailto:feedback@example.com?subject=Feedback%20Cover%20Generator&body=${e}`,
-          );
-        else window.open(`https://wa.me/6281234567890?text=${e}`);
-        toast("✔ Membuka aplikasi…");
-      }
+/* ═══ FEEDBACK ═══ */
+function sendFB(ch){
+  const t=el('fbText').value.trim();
+  if(!t){toast('⚠️ Tulis pesan dahulu');return;}
+  const e=encodeURIComponent(t);
+  if(ch==='email')window.open(`mailto:feedback@example.com?subject=Feedback%20Cover%20Generator&body=${e}`);
+  else window.open(`https://wa.me/6281234567890?text=${e}`);
+  toast('✔ Membuka aplikasi…');
+}
 
-      /* ═══ RESET ═══ */
-      function resetForm() {
-        if (!confirm("Reset semua data?")) return;
-        localStorage.removeItem("cg10");
-        asis = [];
-        dark = true;
-        logo = "itera";
-        const n = new Date();
-        el("nomorModul").value = "1";
-        el("logoW").value = "4";
-        el("logoH").value = "4";
-        el("sigMonth").value = MO[n.getMonth()];
-        el("sigDay").value = n.getDate();
-        el("mTop").value = "3";
-        el("mBottom").value = "3";
-        el("mLeft").value = "4";
-        el("mRight").value = "3";
-        [
-          "judulModul",
-          "mataKuliah",
-          "namaM",
-          "nimM",
-          "kelompokM",
-          "tglPraktikum",
-          "lokasiPraktikum",
-        ].forEach((id) => {
-          const e = el(id);
-          if (e) e.value = "";
-        });
-        setKelas("RA", 0);
-        selLogo("itera", 1);
-        applyTheme();
-        applyMargins();
-        addA();
-        qup();
-        toast("✔ Form direset");
-      }
+/* ═══ RESET ═══ */
+function resetForm(){
+  if(!confirm('Reset semua data?'))return;
+  localStorage.removeItem('cg10');asis=[];dark=true;logo='itera';
+  const n=new Date();
+  el('nomorModul').value='1';el('logoW').value='4';el('logoH').value='4';
+  el('sigMonth').value=MO[n.getMonth()];el('sigDay').value=n.getDate();
+  el('mTop').value='3';el('mBottom').value='3';el('mLeft').value='4';el('mRight').value='3';
+  ['judulModul','mataKuliah','namaM','nimM','kelompokM','tglPraktikum','lokasiPraktikum'].forEach(id=>{const e=el(id);if(e)e.value='';});
+  setKelas('RA',0);selLogo('itera',1);applyTheme();applyMargins();addA();qup();
+  toast('✔ Form direset');
+}
 
-      function fmtD(s) {
-        if (!s) return "...";
-        const d = new Date(s + "T00:00:00");
-        return `${d.getDate()} ${MO[d.getMonth()]} ${d.getFullYear()}`;
-      }
+function fmtD(s){if(!s)return'...';const d=new Date(s+'T00:00:00');return`${d.getDate()} ${MO[d.getMonth()]} ${d.getFullYear()}`;}
 
-      /* ═══ VALIDATE ═══ */
-      function validate() {
-        const req = [
-          { id: "judulModul", l: "Judul Modul" },
-          { id: "mataKuliah", l: "Mata Kuliah" },
-          { id: "namaM", l: "Nama" },
-          { id: "nimM", l: "NIM" },
-          { id: "tglPraktikum", l: "Tanggal Praktikum" },
-          { id: "lokasiPraktikum", l: "Tempat Praktikum" },
-        ];
-        const ms = req.filter((r) => !gv(r.id)).map((r) => r.l);
-        const box = el("alertBox");
-        if (ms.length) {
-          box.innerHTML = "⚠️ Wajib diisi: " + ms.join(", ");
-          box.classList.add("on");
-          toast("⚠️ " + ms.join(", "));
-          return false;
-        }
-        box.classList.remove("on");
-        return true;
-      }
+/* ═══ VALIDATE ═══ */
+function validate(){
+  const req=[{id:'judulModul',l:'Judul Modul'},{id:'mataKuliah',l:'Mata Kuliah'},{id:'namaM',l:'Nama'},{id:'nimM',l:'NIM'},{id:'tglPraktikum',l:'Tanggal Praktikum'},{id:'lokasiPraktikum',l:'Tempat Praktikum'}];
+  const ms=req.filter(r=>!gv(r.id)).map(r=>r.l);
+  const box=el('alertBox');
+  if(ms.length){box.innerHTML='⚠️ Wajib diisi: '+ms.join(', ');box.classList.add('on');toast('⚠️ '+ms.join(', '));return false;}
+  box.classList.remove('on');return true;
+}
 
-      /* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════
    PAGE CONTENT BUILDERS
    Both preview and PDF use the SAME HTML.
    For PDF we set explicit inline styles; for
    preview the outer .page-inner div handles
    padding/size.
 ═══════════════════════════════════════════ */
-      function buildP1(forPDF = false) {
-        const nom = `MODUL ${gv("nomorModul") || 1}`,
-          jdl = gv("judulModul") || "JUDUL MODUL";
-        const mkl = `Laporan Praktikum ${gv("mataKuliah") || "Mata Kuliah"}`;
-        const na = gv("namaM") || "...",
-          ni = gv("nimM") || "...",
-          kl = gv("kelasM") || "RA",
-          kg = gv("kelompokM");
-        const wPx = cm2px(gv("logoW") || 4),
-          hPx = cm2px(gv("logoH") || 4);
-        const an =
-          asis
-            .filter((a) => a.n)
-            .map((a) => esc(a.n))
-            .join("<br>") || "...";
-        const t = cm2px(gv("mTop") || 3),
-          b = cm2px(gv("mBottom") || 3);
-        const l = cm2px(gv("mLeft") || 4),
-          r = cm2px(gv("mRight") || 3);
-        const wrapStyle = forPDF
-          ? `width:794px;min-height:1123px;padding:${t}px ${r}px ${b}px ${l}px;display:flex;flex-direction:column;align-items:center;background:#fff;`
-          : "";
-        const logoTag = `<img src="${logoSrc()}" width="${wPx}" height="${hPx}" style="display:block;object-fit:contain" onerror="this.style.display='none'">`;
-        const bs =
-          "font-family:Times New Roman,Times,serif;font-size:12pt;color:#000;";
-        return `<div style="${wrapStyle}">
+function buildP1(forPDF=false){
+  const nom=`MODUL ${gv('nomorModul')||1}`,jdl=gv('judulModul')||'JUDUL MODUL';
+  const mkl=`Laporan Praktikum ${gv('mataKuliah')||'Mata Kuliah'}`;
+  const na=gv('namaM')||'...',ni=gv('nimM')||'...',kl=gv('kelasM')||'RA',kg=gv('kelompokM');
+  const wPx=cm2px(gv('logoW')||4),hPx=cm2px(gv('logoH')||4);
+  const an=asis.filter(a=>a.n).map(a=>esc(a.n)).join('<br>')||'...';
+  const t=cm2px(gv('mTop')||3),b=cm2px(gv('mBottom')||3);
+  const l=cm2px(gv('mLeft')||4),r=cm2px(gv('mRight')||3);
+  const wrapStyle=forPDF?`width:794px;min-height:1123px;padding:${t}px ${r}px ${b}px ${l}px;display:flex;flex-direction:column;align-items:center;background:#fff;`:'';
+  const logoTag=`<img src="${logoSrc()}" width="${wPx}" height="${hPx}" style="display:block;object-fit:contain" onerror="this.style.display='none'">`;
+  const bs='font-family:Times New Roman,Times,serif;font-size:12pt;color:#000;';
+  return `<div style="${wrapStyle}">
   <div style="width:100%;text-align:center">
     <div style="${bs}font-size:14pt;font-weight:bold;text-transform:uppercase;letter-spacing:.5px">${nom}</div>
     <div style="height:4px"></div>
@@ -2556,7 +733,7 @@
     <div style="height:4px"></div>
     <div style="${bs}font-size:14pt;font-weight:bold">${esc(mkl)}</div>
   </div>
-  <div style="flex:1;min-height:20px"></div>
+  <div style="flex:1.2;min-height:10px"></div>
   <div style="width:100%;text-align:center">
     <div style="${bs}font-weight:bold">Oleh:</div>
     <div style="height:8px"></div>
@@ -2564,13 +741,13 @@
       <tr><td style="padding:2px 4px;vertical-align:top">NAMA</td><td style="padding:2px 4px;vertical-align:top">:</td><td style="padding:2px 4px;vertical-align:top">${esc(na)}</td></tr>
       <tr><td style="padding:2px 4px;vertical-align:top">NIM</td><td style="padding:2px 4px;vertical-align:top">:</td><td style="padding:2px 4px;vertical-align:top">${esc(ni)}</td></tr>
       <tr><td style="padding:2px 4px;vertical-align:top">KELAS</td><td style="padding:2px 4px;vertical-align:top">:</td><td style="padding:2px 4px;vertical-align:top">${esc(kl)}</td></tr>
-      ${kg ? `<tr><td style="padding:2px 4px;vertical-align:top">KELOMPOK</td><td style="padding:2px 4px;vertical-align:top">:</td><td style="padding:2px 4px;vertical-align:top">${esc(kg)}</td></tr>` : ""}
+      ${kg?`<tr><td style="padding:2px 4px;vertical-align:top">KELOMPOK</td><td style="padding:2px 4px;vertical-align:top">:</td><td style="padding:2px 4px;vertical-align:top">${esc(kg)}</td></tr>`:''}
       <tr><td style="padding:2px 4px;vertical-align:top">ASISTEN</td><td style="padding:2px 4px;vertical-align:top">:</td><td style="padding:2px 4px;vertical-align:top">${an}</td></tr>
     </table>
-    <div style="height:20px"></div>
+    <div style="height:48px"></div>
     <div style="display:flex;justify-content:center">${logoTag}</div>
   </div>
-  <div style="flex:1;min-height:20px"></div>
+  <div style="flex:.8;min-height:10px"></div>
   <div style="width:100%;text-align:center">
     <div style="${bs}font-weight:bold;text-transform:uppercase;line-height:1.6">${LAB}</div>
     <div style="${bs}font-weight:bold;text-transform:uppercase;line-height:1.6">${FAK}</div>
@@ -2578,46 +755,23 @@
     <div style="${bs}font-weight:bold;text-transform:uppercase;line-height:1.6">${YR}</div>
   </div>
 </div>`;
-      }
+}
 
-      function buildP2(forPDF = false) {
-        const a = getA(),
-          jdl = gv("judulModul") || "...",
-          tgl = fmtD(gv("tglPraktikum"));
-        const lok = gv("lokasiPraktikum") || "...",
-          na = gv("namaM") || "...",
-          ni = gv("nimM") || "...",
-          kl = gv("kelasM") || "...";
-        const sd = gv("sigDay") || "...",
-          sm = gv("sigMonth") || "...";
-        const t = cm2px(gv("mTop") || 3),
-          b = cm2px(gv("mBottom") || 3);
-        const l = cm2px(gv("mLeft") || 4),
-          r = cm2px(gv("mRight") || 3);
-        const wrapStyle = forPDF
-          ? `width:794px;min-height:1123px;padding:${t}px ${r}px ${b}px ${l}px;display:flex;flex-direction:column;background:#fff;`
-          : "";
-        const bs =
-          "font-family:Times New Roman,Times,serif;font-size:12pt;color:#000;";
-        const rows = [
-          ["Judul Modul", jdl],
-          ["Tanggal Praktikum", tgl],
-          ["Tempat Praktikum", lok],
-          ["Nama", na],
-          ["NIM", ni],
-          ["Kelas", kl],
-          ["Asisten Praktikum", a?.n || "..."],
-        ];
-        const trs = rows
-          .map(
-            (rw, i) => `
+function buildP2(forPDF=false){
+  const a=getA(),jdl=gv('judulModul')||'...',tgl=fmtD(gv('tglPraktikum'));
+  const lok=gv('lokasiPraktikum')||'...',na=gv('namaM')||'...',ni=gv('nimM')||'...',kl=gv('kelasM')||'...';
+  const sd=gv('sigDay')||'...',sm=gv('sigMonth')||'...';
+  const t=cm2px(gv('mTop')||3),b=cm2px(gv('mBottom')||3);
+  const l=cm2px(gv('mLeft')||4),r=cm2px(gv('mRight')||3);
+  const wrapStyle=forPDF?`width:794px;min-height:1123px;padding:${t}px ${r}px ${b}px ${l}px;display:flex;flex-direction:column;background:#fff;`:'';
+  const bs='font-family:Times New Roman,Times,serif;font-size:12pt;color:#000;';
+  const rows=[['Judul Modul',jdl],['Tanggal Praktikum',tgl],['Tempat Praktikum',lok],['Nama',na],['NIM',ni],['Kelas',kl],['Asisten Praktikum',a?.n||'...']];
+  const trs=rows.map((rw,i)=>`
     <tr><td style="${bs}padding:3px 0;vertical-align:top;white-space:nowrap;width:1%">${rw[0]}</td>
     <td style="${bs}padding:3px 6px;vertical-align:top;width:1%">:</td>
     <td style="${bs}padding:3px 0;vertical-align:top">${esc(rw[1])}</td></tr>
-    ${i < rows.length - 1 ? `<tr><td colspan="3" style="height:10pt;padding:0"></td></tr>` : ""}`,
-          )
-          .join("");
-        return `<div style="${wrapStyle}">
+    ${i<rows.length-1?`<tr><td colspan="3" style="height:10pt;padding:0"></td></tr>`:''}`).join('');
+  return `<div style="${wrapStyle}">
   <table style="border-collapse:collapse">${trs}</table>
   <div style="height:38pt;flex-shrink:0"></div>
   <div style="width:100%;display:flex;justify-content:flex-end">
@@ -2625,427 +779,263 @@
       <div style="${bs}">Lampung Selatan, ${sd} ${esc(sm)} ${YR}</div>
       <div style="${bs}font-weight:bold">Mengetahui,</div>
       <div style="height:66px"></div>
-      <div style="${bs}font-weight:bold">${esc(a?.n || "...")}</div>
-      <div style="${bs}">NIM. ${esc(a?.m || "...")}</div>
+      <div style="${bs}font-weight:bold">${esc(a?.n||'...')}</div>
+      <div style="${bs}">NIM. ${esc(a?.m||'...')}</div>
     </div>
   </div>
 </div>`;
-      }
+}
 
-      /* ═══ UPDATE PREVIEW ═══ */
-      function qup() {
-        const h1 = buildP1(),
-          h2 = buildP2();
-        ["mp1i", "dp1i"].forEach((id) => {
-          const e = el(id);
-          if (e) e.innerHTML = h1;
-        });
-        ["mp2i", "dp2i"].forEach((id) => {
-          const e = el(id);
-          if (e) e.innerHTML = h2;
-        });
-        setTimeout(scaleAll, 10);
-        saveSt();
-      }
+/* ═══ UPDATE PREVIEW ═══ */
+function qup(){
+  const h1=buildP1(),h2=buildP2();
+  ['mp1i','dp1i'].forEach(id=>{const e=el(id);if(e)e.innerHTML=h1;});
+  ['mp2i','dp2i'].forEach(id=>{const e=el(id);if(e)e.innerHTML=h2;});
+  setTimeout(scaleAll,10);
+  saveSt();
+}
 
-      /* ═══ PDF EXPORT via Browser Print (identical to preview) ═══
+/* ═══ PDF EXPORT via Browser Print (identical to preview) ═══
    Opens a dedicated print window with the document content.
    User presses Ctrl+P / Cmd+P or the auto print dialog.
    Output is pixel-perfect because the browser renders it natively.
 ═══════════════════════════════════════════════════════════ */
-      function exportPDF() {
-        if (!validate()) return;
+function exportPDF(){
+  if(!validate())return;
 
-        const t = gv("mTop") || 3,
-          b = gv("mBottom") || 3;
-        const l = gv("mLeft") || 4,
-          r = gv("mRight") || 3;
+  const t=gv('mTop')||3, b=gv('mBottom')||3;
+  const l=gv('mLeft')||4, r=gv('mRight')||3;
 
-        // Build self-contained HTML for the print window
-        const html = `<!DOCTYPE html>
+  // Build self-contained HTML for the print window
+  const logoW = cm2px(gv('logoW')||4), logoH = cm2px(gv('logoH')||4);
+  const html=`<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Cover_MODUL${gv("nomorModul") || 1}_${gv("nimM") || "NIM"}</title>
+<title>Cover_MODUL${gv('nomorModul')||1}_${gv('nimM')||'NIM'}</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  @font-face{font-family:'TNR';src:local('Times New Roman'),local('TimesNewRoman')}
-  body{font-family:'Times New Roman',Times,serif;font-size:12pt;color:#000;background:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Times New Roman',Times,serif;font-size:12pt;color:#000;background:#fff}
 
-  /* Page setup */
-  @page{
-    size:A4 portrait;
-    margin:${t}cm ${r}cm ${b}cm ${l}cm;
-  }
-  @page:first{ margin:${t}cm ${r}cm ${b}cm ${l}cm; }
+/* ── PRINT: force exactly A4, 2 pages ── */
+@page{
+  size:210mm 297mm;
+  margin:${t}cm ${r}cm ${b}cm ${l}cm;
+}
 
-  /* Each .page is one A4 page */
+/* Each .page = exactly one printed page */
+.page{
+  width:100%;
+  /* 297mm minus top+bottom margin = printable height */
+  height:calc(297mm - ${t}cm - ${b}cm);
+  page-break-after:always;
+  break-after:page;
+  page-break-inside:avoid;
+  break-inside:avoid;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.page:last-child{
+  page-break-after:avoid;
+  break-after:auto;
+}
+
+/* ── Page 1 ── */
+.p1-top{text-align:center;width:100%;flex-shrink:0}
+.p1-mid{flex:1.2;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:16pt;width:100%;text-align:center;min-height:0;overflow:hidden}
+.p1-bot{text-align:center;width:100%;flex-shrink:0}
+
+/* ── Page 2 ── */
+.p2-tbl{border-collapse:collapse;width:auto}
+.p2-tbl td{padding:3px 0;vertical-align:top}
+.p2-tbl td.colon{padding:3px 7px;width:1%;white-space:nowrap}
+.p2-tbl td.lbl{width:1%;white-space:nowrap}
+.p2-gap td{height:10pt;padding:0}
+.sign-outer{margin-top:36pt;display:flex;justify-content:flex-end;width:100%}
+.sign-inner{text-align:left}
+.sign-space{height:64px}
+
+/* ── Shared typography ── */
+.b14{font-size:14pt;font-weight:bold}
+.b12{font-size:12pt;font-weight:bold}
+.up{text-transform:uppercase}
+.lh{line-height:1.6}
+.stbl{border-collapse:collapse;text-align:left;margin:0 auto}
+.stbl td{padding:2px 4px;vertical-align:top}
+.logo-box{display:flex;justify-content:center;margin:14px 0 0}
+.logo-box img{display:block;object-fit:contain}
+
+/* ── Screen preview (the popup window, not print) ── */
+@media screen{
+  html{background:#ccc}
+  body{background:#ccc;padding:24px 0}
   .page{
-    width:100%;
-    min-height:100vh;
-    page-break-after:always;
-    display:flex;
-    flex-direction:column;
-    font-family:'Times New Roman',Times,serif;
-    font-size:12pt;
-    color:#000;
+    background:#fff;
+    width:210mm;
+    height:auto;
+    min-height:297mm;
+    padding:${t}cm ${r}cm ${b}cm ${l}cm;
+    margin:0 auto 24px;
+    box-shadow:0 6px 24px rgba(0,0,0,.25);
+    page-break-after:unset;
+    break-after:unset;
   }
-  .page:last-child{page-break-after:avoid}
-
-  /* Page 1 layout */
-  .p1-top{text-align:center;width:100%}
-  .p1-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;text-align:center}
-  .p1-bot{text-align:center;width:100%;margin-top:auto}
-  .bold14{font-size:14pt;font-weight:bold}
-  .bold12{font-size:12pt;font-weight:bold}
-  .upper{text-transform:uppercase}
-  .lh16{line-height:1.6}
-  .stbl{border-collapse:collapse;text-align:left;margin:0 auto}
-  .stbl td{padding:2px 4px;vertical-align:top}
-  .logo-wrap{display:flex;justify-content:center;margin:18px 0}
-  .logo-wrap img{display:block;object-fit:contain}
-
-  /* Page 2 layout */
-  .p2-tbl{border-collapse:collapse;width:auto}
-  .p2-tbl td{padding:3px 0;vertical-align:top}
-  .p2-tbl td.colon{padding:3px 7px;width:1%;white-space:nowrap}
-  .p2-tbl td.label{width:1%;white-space:nowrap}
-  .p2-spacer td{height:10pt;padding:0}
-  .sign-wrap{margin-top:38pt;display:flex;justify-content:flex-end;width:100%}
-  .sign-block{text-align:left}
-  .sign-gap{height:66px}
-
-  /* Screen styles (preview when opened in browser) */
-  @media screen{
-    body{background:#e0e0e0;padding:20px}
-    .page{background:#fff;width:210mm;min-height:297mm;padding:${t}cm ${r}cm ${b}cm ${l}cm;margin:0 auto 20px;box-shadow:0 4px 20px rgba(0,0,0,.2)}
-    #print-btn{position:fixed;top:16px;right:16px;padding:12px 24px;background:#007aff;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(0,122,255,.4);z-index:999;font-family:system-ui,sans-serif}
-    #print-btn:hover{background:#0066dd}
-    #print-note{position:fixed;top:66px;right:16px;font-size:.75rem;color:#666;font-family:system-ui,sans-serif;text-align:right;line-height:1.5;z-index:999}
-  }
-  @media print{
-    body{background:#fff;padding:0}
-    #print-btn,#print-note{display:none!important}
-  }
+  #ctrl{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:8px;z-index:999}
+  #btn-print{padding:13px 22px;background:#007aff;color:#fff;border:none;border-radius:12px;font-size:.95rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(0,122,255,.4);font-family:system-ui,sans-serif}
+  #btn-print:hover{background:#0060d0}
+  #btn-note{font-size:.72rem;color:#555;font-family:system-ui,sans-serif;text-align:center;line-height:1.5}
+}
+@media print{
+  html,body{background:#fff;padding:0}
+  #ctrl{display:none!important}
+}
 </style>
 </head>
 <body>
-<button id="print-btn" onclick="window.print()">🖨 Simpan PDF</button>
-<div id="print-note">Klik tombol atau tekan Ctrl+P / ⌘P<br>Pilih "Save as PDF" di dialog cetak</div>
 
-<!-- PAGE 1 -->
+<div id="ctrl">
+  <button id="btn-print" onclick="window.print()">🖨 Simpan PDF</button>
+  <div id="btn-note">Ctrl+P / ⌘P → Save as PDF</div>
+</div>
+
+<!-- ══ PAGE 1 ══ -->
 <div class="page">
   <div class="p1-top">
-    <div class="bold14 upper" style="letter-spacing:.5px">${escP(gv("nomorModul") || 1, "MODUL ")}</div>
+    <div class="b14 up" style="letter-spacing:.4px">${escP(gv('nomorModul')||1,'','MODUL ')}</div>
     <div style="height:4px"></div>
-    <div class="bold14 upper" style="line-height:1.4">${escP(gv("judulModul"), "JUDUL MODUL")}</div>
+    <div class="b14 up" style="line-height:1.4">${esc(gv('judulModul')||'JUDUL MODUL')}</div>
     <div style="height:4px"></div>
-    <div class="bold14">${escP(gv("mataKuliah"), "", "Laporan Praktikum ")}</div>
+    <div class="b14">Laporan Praktikum ${esc(gv('mataKuliah')||'Mata Kuliah')}</div>
   </div>
+
   <div class="p1-mid">
-    <div class="bold12">Oleh:</div>
-    <div style="height:8px"></div>
+    <div class="b12" style="margin-bottom:8px">Oleh:</div>
     <table class="stbl">
-      <tr><td class="bold12">NAMA</td><td class="bold12">:</td><td class="bold12">${esc(gv("namaM") || "...")}</td></tr>
-      <tr><td class="bold12">NIM</td><td class="bold12">:</td><td class="bold12">${esc(gv("nimM") || "...")}</td></tr>
-      <tr><td class="bold12">KELAS</td><td class="bold12">:</td><td class="bold12">${esc(gv("kelasM") || "RA")}</td></tr>
-      ${gv("kelompokM") ? `<tr><td class="bold12">KELOMPOK</td><td class="bold12">:</td><td class="bold12">${esc(gv("kelompokM"))}</td></tr>` : ""}
-      <tr><td class="bold12" style="vertical-align:top">ASISTEN</td><td class="bold12" style="vertical-align:top">:</td><td class="bold12">${
-        asis
-          .filter((a) => a.n)
-          .map((a) => esc(a.n))
-          .join("<br>") || "..."
-      }</td></tr>
+      <tr><td class="b12">NAMA</td><td class="b12">&nbsp;:&nbsp;</td><td class="b12">${esc(gv('namaM')||'...')}</td></tr>
+      <tr><td class="b12">NIM</td><td class="b12">&nbsp;:&nbsp;</td><td class="b12">${esc(gv('nimM')||'...')}</td></tr>
+      <tr><td class="b12">KELAS</td><td class="b12">&nbsp;:&nbsp;</td><td class="b12">${esc(gv('kelasM')||'RA')}</td></tr>
+      ${gv('kelompokM')?`<tr><td class="b12">KELOMPOK</td><td class="b12">&nbsp;:&nbsp;</td><td class="b12">${esc(gv('kelompokM'))}</td></tr>`:''}
+      <tr><td class="b12" style="vertical-align:top">ASISTEN</td><td class="b12" style="vertical-align:top">&nbsp;:&nbsp;</td><td class="b12">${asis.filter(a=>a.n).map(a=>esc(a.n)).join('<br>')||'...'}</td></tr>
     </table>
-    <div class="logo-wrap">
-      <img src="${logoSrc()}" width="${cm2px(gv("logoW") || 4)}" height="${cm2px(gv("logoH") || 4)}" alt="Logo"
-        onerror="this.style.display='none'">
+    <div style="height:48px"></div>
+    <div class="logo-box">
+      <img src="${logoSrc()}" width="${logoW}" height="${logoH}" alt="Logo" onerror="this.style.display='none'">
     </div>
   </div>
+
   <div class="p1-bot">
-    <div class="bold12 upper lh16">${LAB}</div>
-    <div class="bold12 upper lh16">${FAK}</div>
-    <div class="bold12 upper lh16">${UNIV}</div>
-    <div class="bold12 upper lh16">${YR}</div>
+    <div class="b12 up lh">${LAB}</div>
+    <div class="b12 up lh">${FAK}</div>
+    <div class="b12 up lh">${UNIV}</div>
+    <div class="b12 up lh">${YR}</div>
   </div>
 </div>
 
-<!-- PAGE 2 -->
+<!-- ══ PAGE 2 ══ -->
 <div class="page">
   <table class="p2-tbl">
-    ${[
-      ["Judul Modul", gv("judulModul") || "..."],
-      ["Tanggal Praktikum", fmtD(gv("tglPraktikum"))],
-      ["Tempat Praktikum", gv("lokasiPraktikum") || "..."],
-      ["Nama", gv("namaM") || "..."],
-      ["NIM", gv("nimM") || "..."],
-      ["Kelas", gv("kelasM") || "..."],
-      ["Asisten Praktikum", getA()?.n || "..."],
-    ]
-      .map(
-        (row, i) => `<tr>
-        <td class="label">${row[0]}</td>
+    ${[['Judul Modul',gv('judulModul')||'...'],
+       ['Tanggal Praktikum',fmtD(gv('tglPraktikum'))],
+       ['Tempat Praktikum',gv('lokasiPraktikum')||'...'],
+       ['Nama',gv('namaM')||'...'],
+       ['NIM',gv('nimM')||'...'],
+       ['Kelas',gv('kelasM')||'...'],
+       ['Asisten Praktikum',(getA()?.n)||'...']]
+      .map((row,i)=>`<tr>
+        <td class="lbl">${row[0]}</td>
         <td class="colon">:</td>
         <td>${esc(row[1])}</td>
-      </tr>${i < 6 ? '<tr class="p2-spacer"><td colspan="3"></td></tr>' : ""}`,
-      )
-      .join("")}
+      </tr>${i<6?'<tr class="p2-gap"><td colspan="3"></td></tr>':''}`).join('')}
   </table>
-  <div class="sign-wrap">
-    <div class="sign-block">
-      <div>Lampung Selatan, ${esc(gv("sigDay") || "...")} ${esc(gv("sigMonth") || "...")} ${YR}</div>
-      <div class="bold12">Mengetahui,</div>
-      <div class="sign-gap"></div>
-      <div class="bold12">${esc(getA()?.n || "...")}</div>
-      <div>NIM. ${esc(getA()?.m || "...")}</div>
+  <div class="sign-outer">
+    <div class="sign-inner">
+      <div>Lampung Selatan, ${esc(gv('sigDay')||'...')} ${esc(gv('sigMonth')||'...')} ${YR}</div>
+      <div class="b12">Mengetahui,</div>
+      <div class="sign-space"></div>
+      <div class="b12">${esc((getA()?.n)||'...')}</div>
+      <div>NIM. ${esc((getA()?.m)||'...')}</div>
     </div>
   </div>
 </div>
 
 <script>
-// Auto-trigger print dialog after a short delay for images to load
 window.addEventListener('load',function(){
-  // Only auto-print if opened as popup (window.opener exists)
-  if(window.opener) setTimeout(()=>window.print(), 600);
+  if(window.opener) setTimeout(function(){window.print();},500);
 });
 <\/script>
 </body></html>`;
 
-        // Open in popup window sized to A4
-        const pw = window.open(
-          "",
-          "_blank",
-          "width=900,height=1100,scrollbars=yes,resizable=yes",
-        );
-        if (!pw) {
-          toast("⚠️ Pop-up diblokir browser. Izinkan pop-up untuk situs ini.");
-          return;
-        }
-        pw.document.open();
-        pw.document.write(html);
-        pw.document.close();
-        toast('✔ Jendela cetak dibuka — pilih "Save as PDF"');
-      }
+  // Open in popup window sized to A4
+  const pw = window.open('','_blank','width=900,height=1100,scrollbars=yes,resizable=yes');
+  if(!pw){ toast('⚠️ Pop-up diblokir browser. Izinkan pop-up untuk situs ini.'); return; }
+  pw.document.open();
+  pw.document.write(html);
+  pw.document.close();
+  toast('✔ Jendela cetak dibuka — pilih "Save as PDF"');
+}
 
-      // Helper: prepend a prefix if value exists
-      function escP(val, fallback = "", prefix = "") {
-        const v = val || fallback;
-        return esc(prefix + v);
-      }
+// Helper: prepend a prefix if value exists
+function escP(val, fallback='', prefix=''){
+  const v = val || fallback;
+  return esc(prefix + v);
+}
 
-      /* ═══ DOCX EXPORT ═══ */
-      async function exportDOCX() {
-        if (!validate()) return;
-        // docx.js UMD exports to window.docx
-        const D = window.docx;
-        if (!D) {
-          toast("⚠️ Library docx belum termuat, muat ulang");
-          return;
-        }
-        toast("⏳ Membuat DOCX…", 8000);
-        try {
-          const {
-            Document,
-            Packer,
-            Paragraph,
-            TextRun,
-            AlignmentType,
-            PageBreak,
-            BorderStyle,
-            WidthType,
-            Table,
-            TableRow,
-            TableCell,
-          } = D;
-          const nom = `MODUL ${gv("nomorModul") || 1}`,
-            jdl = gv("judulModul"),
-            mkl = `Laporan Praktikum ${gv("mataKuliah")}`;
-          const na = gv("namaM"),
-            ni = gv("nimM"),
-            kl = gv("kelasM"),
-            kg = gv("kelompokM");
-          const tgl = fmtD(gv("tglPraktikum")),
-            lok = gv("lokasiPraktikum");
-          const a = getA(),
-            sd = gv("sigDay"),
-            sm = gv("sigMonth");
-          const TR = (t, o = {}) =>
-            new TextRun({ text: t, font: "Times New Roman", size: 24, ...o });
-          const TR14 = (t, o = {}) =>
-            new TextRun({
-              text: t,
-              font: "Times New Roman",
-              size: 28,
-              bold: true,
-              ...o,
-            });
-          const CP = (c, o = {}) =>
-            new Paragraph({
-              alignment: AlignmentType.CENTER,
-              spacing: { before: 40, after: 40 },
-              children: c,
-              ...o,
-            });
-          const LP = (c, o = {}) =>
-            new Paragraph({
-              spacing: { before: 40, after: 40 },
-              children: c,
-              ...o,
-            });
-          const RP = (c, o = {}) =>
-            new Paragraph({
-              alignment: AlignmentType.RIGHT,
-              spacing: { before: 40, after: 40 },
-              children: c,
-              ...o,
-            });
-          const MT = () =>
-            new Paragraph({
-              children: [new TextRun("")],
-              spacing: { before: 40, after: 40 },
-            });
-          const BN = { style: BorderStyle.NIL };
-          const mkRow = (lb, vl) =>
-            new TableRow({
-              children: [
-                new TableCell({
-                  width: { size: 2400, type: WidthType.DXA },
-                  borders: { top: BN, bottom: BN, left: BN, right: BN },
-                  margins: { top: 60, bottom: 60, left: 0, right: 0 },
-                  children: [new Paragraph({ children: [TR(lb)] })],
-                }),
-                new TableCell({
-                  width: { size: 200, type: WidthType.DXA },
-                  borders: { top: BN, bottom: BN, left: BN, right: BN },
-                  margins: { top: 60, bottom: 60, left: 40, right: 40 },
-                  children: [new Paragraph({ children: [TR(":")] })],
-                }),
-                new TableCell({
-                  width: { size: 5906, type: WidthType.DXA },
-                  borders: { top: BN, bottom: BN, left: BN, right: BN },
-                  margins: { top: 60, bottom: 60, left: 60, right: 0 },
-                  children: [new Paragraph({ children: [TR(vl)] })],
-                }),
-              ],
-            });
-          const SP = () =>
-            new TableRow({
-              children: [
-                new TableCell({
-                  columnSpan: 3,
-                  width: { size: 8506, type: WidthType.DXA },
-                  borders: { top: BN, bottom: BN, left: BN, right: BN },
-                  children: [MT()],
-                }),
-              ],
-            });
-          const mT = cm2dxa(gv("mTop") || 3),
-            mB = cm2dxa(gv("mBottom") || 3);
-          const mL = cm2dxa(gv("mLeft") || 4),
-            mR = cm2dxa(gv("mRight") || 3);
-          const p1 = [
-            CP([TR14(nom)]),
-            CP([TR14(jdl)]),
-            CP([TR14(mkl)]),
-            MT(),
-            MT(),
-            MT(),
-            CP([TR("Oleh:", { bold: true })]),
-            MT(),
-            LP([TR("NAMA         : " + na, { bold: true })]),
-            LP([TR("NIM            : " + ni, { bold: true })]),
-            LP([TR("KELAS        : " + kl, { bold: true })]),
-            ...(kg ? [LP([TR("KELOMPOK : " + kg, { bold: true })])] : []),
-            LP([
-              TR(
-                "ASISTEN     : " +
-                  asis
-                    .filter((x) => x.n)
-                    .map((x) => x.n)
-                    .join(", "),
-                { bold: true },
-              ),
-            ]),
-            MT(),
-            MT(),
-            CP([
-              TR("[LOGO " + logo.toUpperCase() + "]", {
-                size: 20,
-                color: "888888",
-              }),
-            ]),
-            MT(),
-            MT(),
-            MT(),
-            MT(),
-            CP([TR(LAB, { bold: true })]),
-            CP([TR(FAK, { bold: true })]),
-            CP([TR(UNIV, { bold: true })]),
-            CP([TR(String(YR), { bold: true })]),
-            new Paragraph({ children: [new PageBreak()] }),
-          ];
-          const drows = [
-            ["Judul Modul", jdl],
-            ["Tanggal Praktikum", tgl],
-            ["Tempat Praktikum", lok],
-            ["Nama", na],
-            ["NIM", ni],
-            ["Kelas", kl],
-            ["Asisten Praktikum", a?.n || "..."],
-          ];
-          const tbl = new Table({
-            width: { size: 8506, type: WidthType.DXA },
-            columnWidths: [2400, 200, 5906],
-            rows: drows.flatMap((rw, i) => [
-              mkRow(rw[0], rw[1]),
-              ...(i < drows.length - 1 ? [SP()] : []),
-            ]),
-          });
-          const p2 = [
-            tbl,
-            MT(),
-            MT(),
-            MT(),
-            MT(),
-            RP([TR(`Lampung Selatan, ${sd} ${sm} ${YR}`)]),
-            RP([TR("Mengetahui,", { bold: true })]),
-            MT(),
-            MT(),
-            MT(),
-            RP([TR(a?.n || "...", { bold: true })]),
-            RP([TR("NIM. " + (a?.m || "..."))]),
-          ];
-          const doc = new Document({
-            sections: [
-              {
-                properties: {
-                  page: {
-                    size: { width: 11906, height: 16838 },
-                    margin: { top: mT, right: mR, bottom: mB, left: mL },
-                  },
-                },
-                children: [...p1, ...p2],
-              },
-            ],
-          });
-          const blob = await Packer.toBlob(doc);
-          const url = URL.createObjectURL(blob);
-          const lnk = document.createElement("a");
-          lnk.href = url;
-          lnk.download = `Cover_MODUL${gv("nomorModul") || 1}_${ni || "NIM"}.docx`;
-          lnk.style.display = "none";
-          document.body.appendChild(lnk);
-          lnk.click();
-          setTimeout(() => {
-            document.body.removeChild(lnk);
-            URL.revokeObjectURL(url);
-          }, 2000);
-          toast("✔ DOCX berhasil diunduh!");
-        } catch (e) {
-          console.error(e);
-          toast("❌ Gagal buat DOCX: " + (e.message || String(e)));
-        }
-      }
-    </script>
-  </body>
+/* ═══ DOCX EXPORT ═══ */
+async function exportDOCX(){
+  if(!validate())return;
+  // docx.js UMD exports to window.docx
+  const D=window.docx;
+  if(!D){toast('⚠️ Library docx belum termuat, muat ulang');return;}
+  toast('⏳ Membuat DOCX…',8000);
+  try{
+    const{Document,Packer,Paragraph,TextRun,AlignmentType,PageBreak,BorderStyle,WidthType,Table,TableRow,TableCell}=D;
+    const nom=`MODUL ${gv('nomorModul')||1}`,jdl=gv('judulModul'),mkl=`Laporan Praktikum ${gv('mataKuliah')}`;
+    const na=gv('namaM'),ni=gv('nimM'),kl=gv('kelasM'),kg=gv('kelompokM');
+    const tgl=fmtD(gv('tglPraktikum')),lok=gv('lokasiPraktikum');
+    const a=getA(),sd=gv('sigDay'),sm=gv('sigMonth');
+    const TR=(t,o={})=>new TextRun({text:t,font:'Times New Roman',size:24,...o});
+    const TR14=(t,o={})=>new TextRun({text:t,font:'Times New Roman',size:28,bold:true,...o});
+    const CP=(c,o={})=>new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:40,after:40},children:c,...o});
+    const LP=(c,o={})=>new Paragraph({spacing:{before:40,after:40},children:c,...o});
+    const RP=(c,o={})=>new Paragraph({alignment:AlignmentType.RIGHT,spacing:{before:40,after:40},children:c,...o});
+    const MT=()=>new Paragraph({children:[new TextRun('')],spacing:{before:40,after:40}});
+    const BN={style:BorderStyle.NIL};
+    const mkRow=(lb,vl)=>new TableRow({children:[
+      new TableCell({width:{size:2400,type:WidthType.DXA},borders:{top:BN,bottom:BN,left:BN,right:BN},margins:{top:60,bottom:60,left:0,right:0},children:[new Paragraph({children:[TR(lb)]})]}),
+      new TableCell({width:{size:200,type:WidthType.DXA},borders:{top:BN,bottom:BN,left:BN,right:BN},margins:{top:60,bottom:60,left:40,right:40},children:[new Paragraph({children:[TR(':')]})]}),
+      new TableCell({width:{size:5906,type:WidthType.DXA},borders:{top:BN,bottom:BN,left:BN,right:BN},margins:{top:60,bottom:60,left:60,right:0},children:[new Paragraph({children:[TR(vl)]})]}),
+    ]});
+    const SP=()=>new TableRow({children:[new TableCell({columnSpan:3,width:{size:8506,type:WidthType.DXA},borders:{top:BN,bottom:BN,left:BN,right:BN},children:[MT()]})]});
+    const mT=cm2dxa(gv('mTop')||3),mB=cm2dxa(gv('mBottom')||3);
+    const mL=cm2dxa(gv('mLeft')||4),mR=cm2dxa(gv('mRight')||3);
+    const p1=[
+      CP([TR14(nom)]),CP([TR14(jdl)]),CP([TR14(mkl)]),MT(),MT(),MT(),
+      CP([TR('Oleh:',{bold:true})]),MT(),
+      LP([TR('NAMA         : '+na,{bold:true})]),LP([TR('NIM            : '+ni,{bold:true})]),
+      LP([TR('KELAS        : '+kl,{bold:true})]),
+      ...(kg?[LP([TR('KELOMPOK : '+kg,{bold:true})])]:[]),
+      LP([TR('ASISTEN     : '+asis.filter(x=>x.n).map(x=>x.n).join(', '),{bold:true})]),
+      MT(),MT(),
+      CP([TR('[LOGO '+logo.toUpperCase()+']',{size:20,color:'888888'})]),
+      MT(),MT(),MT(),MT(),
+      CP([TR(LAB,{bold:true})]),CP([TR(FAK,{bold:true})]),CP([TR(UNIV,{bold:true})]),CP([TR(String(YR),{bold:true})]),
+      new Paragraph({children:[new PageBreak()]}),
+    ];
+    const drows=[['Judul Modul',jdl],['Tanggal Praktikum',tgl],['Tempat Praktikum',lok],['Nama',na],['NIM',ni],['Kelas',kl],['Asisten Praktikum',a?.n||'...']];
+    const tbl=new Table({width:{size:8506,type:WidthType.DXA},columnWidths:[2400,200,5906],rows:drows.flatMap((rw,i)=>[mkRow(rw[0],rw[1]),...(i<drows.length-1?[SP()]:[])])});
+    const p2=[tbl,MT(),MT(),MT(),MT(),RP([TR(`Lampung Selatan, ${sd} ${sm} ${YR}`)]),RP([TR('Mengetahui,',{bold:true})]),MT(),MT(),MT(),RP([TR(a?.n||'...',{bold:true})]),RP([TR('NIM. '+(a?.m||'...'))]),];
+    const doc=new Document({sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:mT,right:mR,bottom:mB,left:mL}}},children:[...p1,...p2]}]});
+    const blob=await Packer.toBlob(doc);
+    const url=URL.createObjectURL(blob);
+    const lnk=document.createElement('a');
+    lnk.href=url;lnk.download=`Cover_MODUL${gv('nomorModul')||1}_${ni||'NIM'}.docx`;
+    lnk.style.display='none';
+    document.body.appendChild(lnk);lnk.click();
+    setTimeout(()=>{document.body.removeChild(lnk);URL.revokeObjectURL(url);},2000);
+    toast('✔ DOCX berhasil diunduh!');
+  }catch(e){console.error(e);toast('❌ Gagal buat DOCX: '+(e.message||String(e)));}
+}
+</script>
+</body>
 </html>
